@@ -1,4 +1,4 @@
-package com.mionix.myapplication
+package com.mionix.myapplication.viewModel
 
 import com.mionix.myapplication.base.onFailure
 import com.mionix.myapplication.base.onLoading
