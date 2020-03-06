@@ -1,5 +1,7 @@
 package com.mionix.myapplication.view.adapter
 
+import android.app.Activity
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -8,12 +10,13 @@ import com.mionix.myapplication.view.fragment.HomeFragment
 import com.mionix.myapplication.view.fragment.InTheatresFragment
 import com.mionix.myapplication.view.fragment.LibraryFragment
 
-class TabsAccessorAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-
+class TabsAccessorAdapter(fm: FragmentManager,context:Context,activity: Activity) : FragmentPagerAdapter(fm) {
+    private var homeFragmentcontext = context
+    private var homeFragmentactivity = activity
     override fun getItem(i: Int): Fragment {
         when (i) {
             0 -> {
-                return HomeFragment()
+                return HomeFragment(homeFragmentcontext,homeFragmentactivity)
             }
             1 -> {
                 return LibraryFragment()
@@ -24,7 +27,7 @@ class TabsAccessorAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
             3 -> {
                 return AccountFragment()
             }
-            else -> return HomeFragment()
+            else -> return HomeFragment(homeFragmentcontext,homeFragmentactivity)
         }
     }
 

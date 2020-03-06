@@ -1,53 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".view.MainActivity">
-    <RelativeLayout
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:id="@+id/appbar"
-            android:background="@color/colorPrimary"
+            android:fitsSystemWindows = "true"
+            android:background="#00000000"
             android:layout_height="wrap_content">
-            <include
-                layout="@layout/toolbar_layout"
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/main_toolbar"
+                app:titleTextColor="@color/colorTitleChoosed"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|enterAlways"
                 />
+
         </com.google.android.material.appbar.AppBarLayout>
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             android:layout_width="match_parent"
-            android:layout_below="@id/appbar"
             android:layout_height="match_parent">
+
             <androidx.viewpager.widget.ViewPager
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/main_tabs"
                 android:id="@+id/homeViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"/>
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/main_tabs"
-                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
-                app:layout_constraintTop_toBottomOf="@id/homeViewPager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="@color/colorSearch"
-                android:layout_alignParentBottom="true"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_below="@id/homeViewPager"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </RelativeLayout>
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
 
+    <com.google.android.material.tabs.TabLayout
+        app:layout_anchor="@id/homeViewPager"
+        app:layout_anchorGravity="bottom"
+        android:layout_gravity="bottom"
+        android:id="@+id/main_tabs"
+        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+        android:background="@color/colorSearch"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/homeViewPager"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

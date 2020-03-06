@@ -3,32 +3,46 @@ package com.mionix.myapplication.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.mionix.myapplication.R
+import com.mionix.myapplication.api.POSTER_BASE_URL
+import com.mionix.myapplication.model.Result
+import com.mionix.myapplication.view.adapter.OnItemClickListener
+import com.mionix.myapplication.view.adapter.PopularMovieAdapter
 import com.mionix.myapplication.view.adapter.TabsAccessorAdapter
 import com.mionix.myapplication.viewModel.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity() {
-    //val myViewModel : MainViewModel by viewModel()
+class MainActivity : AppCompatActivity(){
+
+
+
     private var mToolbar: Toolbar? = null
     private var myViewPage: ViewPager? = null
     private var myTablayout: TabLayout? = null
     private var mytabsAccessorAdapter: TabsAccessorAdapter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //myViewModel.getMovie()
         initView()
+
     }
 
+
+
     private fun initView() {
+
         mToolbar = findViewById(R.id.main_toolbar)
         setSupportActionBar(mToolbar)
         supportActionBar!!.title = "MovieDB"
         myViewPage = findViewById(R.id.homeViewPager)
-        mytabsAccessorAdapter = TabsAccessorAdapter(supportFragmentManager)
+        mytabsAccessorAdapter = TabsAccessorAdapter(supportFragmentManager,this@MainActivity,this@MainActivity)
         myViewPage!!.adapter = mytabsAccessorAdapter
 
         //when we go back the main activity  we will back old position
@@ -94,4 +108,5 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
+
 }

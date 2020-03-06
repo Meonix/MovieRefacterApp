@@ -7,4 +7,7 @@
     <string name="libraryTitleFragment">Library</string>
     <string name="theatresTitleFragment">In Theatres</string>
     <string name="accountTitleFragment">Account</string>
+    <string name="search">Search</string>
+    <string name="popularMovie">POPULAR</string>
+    <string name="topRated">TOP RATED</string>
 </resources>
