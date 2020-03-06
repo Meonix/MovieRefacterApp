@@ -8,4 +8,6 @@ const val POSTER_BASE_URL = "http://image.tmdb.org/t/p/w500"
 interface Api {
     @GET("movie/popular?&language=en-US")
     suspend fun getPoppularMovie(@Query("page") page: Int): ListMovie
+    @GET("movie/top_rated?&language=en-US")
+    suspend fun getTopRateMovie(@Query("page") page: Int): ListMovie
 }

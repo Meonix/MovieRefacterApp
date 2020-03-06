@@ -7,9 +7,11 @@ import com.mionix.myapplication.base.onLoading
 import com.mionix.myapplication.base.onSuccess
 import com.mionix.myapplication.model.ListMovie
 import com.mionix.myapplication.repo.ListPopularMovieRepo
+import com.mionix.myapplication.repo.ListTopRateMovieRepo
 import com.nice.app_ex.base.BaseViewModel
 
-class MainViewModel (private val mListPopularMovie: ListPopularMovieRepo): BaseViewModel(){
+class MainViewModel (private val mListPopularMovie: ListPopularMovieRepo,
+                     private val mListTopRateMovie: ListTopRateMovieRepo): BaseViewModel(){
 
     private val _getListPopularMovie = MutableLiveData<ListMovie>()
     val getListPopularMovie: LiveData<ListMovie> get() = _getListPopularMovie
@@ -28,4 +30,20 @@ class MainViewModel (private val mListPopularMovie: ListPopularMovieRepo): BaseV
             }
     }
 
+    private val _getListTopRateMovie = MutableLiveData<ListMovie>()
+    val getTopRateMovie: LiveData<ListMovie> get() = _getListTopRateMovie
+    fun getTopRateMovie(page: Int) = executeUseCase {
+        mListTopRateMovie.getTopRateMovie(page)
+            .onLoading {
+                println("Loading $it")
+            }
+
+            .onSuccess {
+                _getListTopRateMovie.value = it
+            }
+
+            .onFailure {
+                println("err $it")
+            }
+    }
 }
