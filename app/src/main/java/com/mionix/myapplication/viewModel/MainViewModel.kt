@@ -8,16 +8,14 @@ import com.mionix.myapplication.base.onSuccess
 import com.mionix.myapplication.model.CastAndCrew
 import com.mionix.myapplication.model.ListMovie
 import com.mionix.myapplication.model.Movie
-import com.mionix.myapplication.repo.CastAndCrewRepo
-import com.mionix.myapplication.repo.ListPopularMovieRepo
-import com.mionix.myapplication.repo.ListTopRateMovieRepo
-import com.mionix.myapplication.repo.MovieRepo
+import com.mionix.myapplication.repo.*
 import com.nice.app_ex.base.BaseViewModel
 
 class MainViewModel (private val mListPopularMovie: ListPopularMovieRepo,
                      private val mListTopRateMovie: ListTopRateMovieRepo,
                      private val mMovieRepo: MovieRepo,
-                     private val mCastAndCrew: CastAndCrewRepo): BaseViewModel(){
+                     private val mCastAndCrew: CastAndCrewRepo,
+                     private val mListVietNamMovieRepo: ListVietNamMovieRepo): BaseViewModel(){
 
     private val _getListPopularMovie = MutableLiveData<ListMovie>()
     val getListPopularMovie: LiveData<ListMovie> get() = _getListPopularMovie
@@ -81,6 +79,23 @@ class MainViewModel (private val mListPopularMovie: ListPopularMovieRepo,
 
             .onSuccess {
                 _getDataCastAndCrew.value = it
+            }
+
+            .onFailure {
+                println("err $it")
+            }
+    }
+
+    private val _getVietNamMovie = MutableLiveData<ListMovie>()
+    val getVietNamMovie: LiveData<ListMovie> get() = _getVietNamMovie
+    fun getVietNamMovie() = executeUseCase {
+        mListVietNamMovieRepo.getVietNamMovie()
+            .onLoading {
+                println("Loading $it")
+            }
+
+            .onSuccess {
+                _getVietNamMovie.value = it
             }
 
             .onFailure {

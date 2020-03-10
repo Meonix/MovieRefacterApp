@@ -16,4 +16,6 @@ interface Api {
     suspend fun getMovie(@Path("movie_id")movie_id: Int): Movie
     @GET("movie/{movie_id}/credits")
     suspend fun getCastAndCrew(@Path("movie_id")movie_id: Int): CastAndCrew
+    @GET("movie/now_playing?&language=en-US&page=1&region=VN")
+    suspend fun getVietNamMovie(): ListMovie
 }

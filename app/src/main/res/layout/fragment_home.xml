@@ -24,7 +24,6 @@
                 android:layout_height="50dp"
                 android:paddingLeft="20dp" />
         </com.google.android.material.appbar.AppBarLayout>
-    <!-- TODO: Update blank fragment layout -->
         <androidx.core.widget.NestedScrollView
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             android:layout_width="match_parent"

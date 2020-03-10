@@ -22,7 +22,7 @@ class TabsAccessorAdapter(fm: FragmentManager,context:Context,activity: Activity
                 return LibraryFragment()
             }
             2 -> {
-                return InTheatresFragment()
+                return InTheatresFragment(homeFragmentcontext,homeFragmentactivity)
             }
             3 -> {
                 return AccountFragment()
