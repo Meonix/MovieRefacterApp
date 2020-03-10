@@ -6,4 +6,5 @@
     <color name="colorSearch">#455A64</color>
     <color name="colorTitleChoosed">#08BFAE</color>
     <color name="colorIconTab">#607D8B</color>
+    <color name="colorWhite">#FFFFFF</color>
 </resources>

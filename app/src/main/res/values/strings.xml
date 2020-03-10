@@ -10,4 +10,10 @@
     <string name="search">Search</string>
     <string name="popularMovie">POPULAR</string>
     <string name="topRated">TOP RATED</string>
+    <string name="add_to_watchlist">ADD TO WATCHLIST</string>
+    <string name="add_to_favourites">ADD TO FAVOURITES</string>
+    <string name="description_movie_detail">DESCRIPTION</string>
+    <string name="genre">genre</string>
+    <string name="titleMovieDetail">Title</string>
+    <string name="castMovieDetail">CAST</string>
 </resources>
