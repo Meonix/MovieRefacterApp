@@ -35,8 +35,8 @@ class InTheatresFragment(context : Context, activity: Activity) : Fragment(), On
     private val listVietNamMovie :MutableList<Result> = mutableListOf()
     private val myViewModel : MainViewModel by viewModel()
     private lateinit var vietnamMovieGridLayoutManager: GridLayoutManager
-    private var homeFragmentcontext = context
-    private var homeFragmentactivity = activity
+    private var inTheatresFragmentcontext = context
+    private var inTheatresFragmentactivity = activity
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,7 +44,7 @@ class InTheatresFragment(context : Context, activity: Activity) : Fragment(), On
         // Inflate the layout for this fragment
         val inTheatresFragment = inflater.inflate(R.layout.fragment_in_theatres, container, false)
         initView(inTheatresFragment)
-        setupViewModel(homeFragmentcontext,homeFragmentactivity)
+        setupViewModel(inTheatresFragmentcontext,inTheatresFragmentactivity)
         return inTheatresFragment
     }
 
@@ -79,7 +79,7 @@ class InTheatresFragment(context : Context, activity: Activity) : Fragment(), On
         intent.putExtra("poster_path",moviePosterURL)
         val options: ActivityOptionsCompat = ActivityOptionsCompat
             .makeSceneTransitionAnimation(
-                homeFragmentactivity,ivItemRecycleView
+                inTheatresFragmentactivity,ivItemRecycleView
                 , ViewCompat.getTransitionName(ivItemRecycleView).toString())
         startActivity(intent,options.toBundle())
     }

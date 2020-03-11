@@ -5,13 +5,17 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
+import com.mionix.myapplication.localDataBase.FavouritesMovieDatabase
 import com.mionix.myapplication.model.Cast
+import com.mionix.myapplication.model.Movie
 import com.mionix.myapplication.view.adapter.CastAdapter
 import com.mionix.myapplication.viewModel.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -30,6 +34,8 @@ class MovieDetail : AppCompatActivity() {
     private lateinit var rvCast : RecyclerView
     private lateinit var adapterCastDetail : CastAdapter
     private lateinit var linearLayoutManager : LinearLayoutManager
+    private lateinit var movie : Movie
+    private var mAuth: FirebaseAuth? = null
     private var listCast :MutableList<Cast> = mutableListOf()
     private val myViewModel : MainViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,14 +45,33 @@ class MovieDetail : AppCompatActivity() {
         val movie_id:String = intent.extras!!["movie_id"].toString()
         poster_path= intent.extras!!["poster_path"].toString()
         setupViewModel(movie_id,poster_path)
+        btAddToFavourites.setOnClickListener{
+            val currentUser = mAuth!!.currentUser
+            if(currentUser != null){
+                myViewModel.getMovie(movie_id.toInt())
+                myViewModel.getDataMovieDetail.observe(this, Observer {
+                    movie = it
+                })
+                val db = FavouritesMovieDatabase(this@MovieDetail)
+                val timestampLong = System.currentTimeMillis()/60000
+                val timestamp = timestampLong.toString()
+                db.insertData(movie,timestamp)
+            }
+            else{
+                Toast.makeText(this,"You have to login",Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupViewModel(movie_id: String,poster_path:String) {
+
         Glide.with(this) //1
             .load(poster_path)
             .into(ivMovieDetail)
         myViewModel.getMovie(movie_id.toInt())
         myViewModel.getDataMovieDetail.observe(this, Observer {
+
+
             tvDescriptionText.text = it.overview
             tvTitleDetailMovie.text = it.title
             tvGenre.text = it.genres[0].name
@@ -67,6 +92,7 @@ class MovieDetail : AppCompatActivity() {
     }
 
     private fun initViewMovieDetail() {
+        mAuth = FirebaseAuth.getInstance()
         tvDescriptionText = findViewById(R.id.tvDescriptionText)
         ivBackDropMovieDetail = findViewById(R.id.ivBackDropMovieDetail)
         ivMovieDetail = findViewById(R.id.ivMovieDetail)

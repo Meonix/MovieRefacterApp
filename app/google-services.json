@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "684959088608",
+    "firebase_url": "https://refactermoviebase.firebaseio.com",
+    "project_id": "refactermoviebase",
+    "storage_bucket": "refactermoviebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684959088608:android:726514563d9928175f3585",
+        "android_client_info": {
+          "package_name": "com.mionix.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "684959088608-q13gm5mgg1625qnsl3bgmt8blm59i75a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mionix.myapplication",
+            "certificate_hash": "bd4f1e4be68e2cd9cf2f7d509bb61f22fcd34599"
+          }
+        },
+        {
+          "client_id": "684959088608-0mej3tqosi9o4ikqvr65og24amfmh12h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUfwoli2jeswdgul1Endf3j1i38YwganQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "684959088608-0mej3tqosi9o4ikqvr65og24amfmh12h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -19,7 +19,7 @@ class TabsAccessorAdapter(fm: FragmentManager,context:Context,activity: Activity
                 return HomeFragment(homeFragmentcontext,homeFragmentactivity)
             }
             1 -> {
-                return LibraryFragment()
+                return LibraryFragment(homeFragmentcontext,homeFragmentactivity)
             }
             2 -> {
                 return InTheatresFragment(homeFragmentcontext,homeFragmentactivity)

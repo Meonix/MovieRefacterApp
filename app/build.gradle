@@ -5,12 +5,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
+
+apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.mionix.myapplication"
-        minSdkVersion 15
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -62,6 +64,15 @@ dependencies {
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    //Firebase
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
+    implementation 'com.google.firebase:firebase-database:16.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
+    //Facebook SDK
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+    //Line
+    implementation 'com.linecorp:linesdk:5.0.1'
 
     implementation 'com.squareup.okhttp:okhttp:2.2.0'
     implementation 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
