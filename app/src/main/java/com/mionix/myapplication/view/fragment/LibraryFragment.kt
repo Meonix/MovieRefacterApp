@@ -14,8 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 
 import com.mionix.myapplication.R
-import com.mionix.myapplication.localDataBase.FavouritesMovieDatabase
+import com.mionix.myapplication.localDataBase.MovieLocalDatabase
 import com.mionix.myapplication.model.LocalSavedMovie
+import com.mionix.myapplication.view.adapter.FavouriesMovieAdapter
 import com.mionix.myapplication.view.adapter.WatchListMovieAdapter
 
 /**
@@ -29,8 +30,10 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
     private lateinit var llLibrary1 : LinearLayout
     private lateinit var llLibrary2 : LinearLayout
     private var listFavouriesMovie : MutableList<LocalSavedMovie> = mutableListOf()
+    private var watchListMovie : MutableList<LocalSavedMovie> = mutableListOf()
     private var mAuth: FirebaseAuth? = null
-    private lateinit var adapterTopRateMovieView : WatchListMovieAdapter
+    private lateinit var adapterWatchListMovieView : WatchListMovieAdapter
+    private lateinit var adapterFavouriesMovieView : FavouriesMovieAdapter
     private var homeFragmentcontext = context
     private var homeFragmentactivity = activity
     override fun onCreateView(
@@ -45,14 +48,23 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
     }
 
     private fun initData() {
-        val db = FavouritesMovieDatabase(homeFragmentcontext)
-        val data = db.readData()
+        val db = MovieLocalDatabase(homeFragmentcontext)
+        val favouritesMovieData = db.readFavouriteListData()
+
         listFavouriesMovie.clear()
-        listFavouriesMovie.addAll(data)
-        adapterTopRateMovieView = WatchListMovieAdapter(homeFragmentactivity,
+        listFavouriesMovie.addAll(favouritesMovieData)
+        adapterFavouriesMovieView = FavouriesMovieAdapter(homeFragmentactivity,
             listFavouriesMovie,homeFragmentcontext)
-        rvFavouritesMovie.adapter = adapterTopRateMovieView
+        rvFavouritesMovie.adapter = adapterFavouriesMovieView
         rvFavouritesMovie.adapter!!.notifyDataSetChanged()
+
+        val watchMovieData = db.readWatchListData()
+        watchListMovie.clear()
+        watchListMovie.addAll(watchMovieData)
+        adapterWatchListMovieView = WatchListMovieAdapter(homeFragmentactivity,
+            watchListMovie,homeFragmentcontext)
+        rvWatchListMovie.adapter = adapterWatchListMovieView
+        rvWatchListMovie.adapter!!.notifyDataSetChanged()
 
     }
 

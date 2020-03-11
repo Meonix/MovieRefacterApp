@@ -13,7 +13,8 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
-import com.mionix.myapplication.localDataBase.FavouritesMovieDatabase
+import com.mionix.myapplication.localDataBase.MovieLocalDatabase
+import com.mionix.myapplication.localDataBase.WatchListMovieDatabase
 import com.mionix.myapplication.model.Cast
 import com.mionix.myapplication.model.Movie
 import com.mionix.myapplication.view.adapter.CastAdapter
@@ -34,7 +35,8 @@ class MovieDetail : AppCompatActivity() {
     private lateinit var rvCast : RecyclerView
     private lateinit var adapterCastDetail : CastAdapter
     private lateinit var linearLayoutManager : LinearLayoutManager
-    private lateinit var movie : Movie
+    private lateinit var watchMovie : Movie
+    private lateinit var favouritesMovie : Movie
     private var mAuth: FirebaseAuth? = null
     private var listCast :MutableList<Cast> = mutableListOf()
     private val myViewModel : MainViewModel by viewModel()
@@ -50,12 +52,28 @@ class MovieDetail : AppCompatActivity() {
             if(currentUser != null){
                 myViewModel.getMovie(movie_id.toInt())
                 myViewModel.getDataMovieDetail.observe(this, Observer {
-                    movie = it
+                    favouritesMovie = it
                 })
-                val db = FavouritesMovieDatabase(this@MovieDetail)
+                val db = MovieLocalDatabase(this@MovieDetail)
                 val timestampLong = System.currentTimeMillis()/60000
                 val timestamp = timestampLong.toString()
-                db.insertData(movie,timestamp)
+                db.insertFavouriteListData(favouritesMovie,timestamp)
+            }
+            else{
+                Toast.makeText(this,"You have to login",Toast.LENGTH_SHORT).show()
+            }
+        }
+        btAddToWatchList.setOnClickListener {
+            val currentUser = mAuth!!.currentUser
+            if(currentUser != null){
+                myViewModel.getMovie(movie_id.toInt())
+                myViewModel.getDataMovieDetail.observe(this, Observer {
+                    watchMovie = it
+                })
+                val db = MovieLocalDatabase(this@MovieDetail)
+                val timestampLong = System.currentTimeMillis()/60000
+                val timestamp = timestampLong.toString()
+                db.insertWatchListData(watchMovie,timestamp)
             }
             else{
                 Toast.makeText(this,"You have to login",Toast.LENGTH_SHORT).show()

@@ -6,18 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
 import com.mionix.myapplication.model.LocalSavedMovie
 
-class WatchListMovieAdapter (private val activity: Activity,
+class FavouriesMovieAdapter (private val activity: Activity,
                              private val watchMovieList: MutableList<LocalSavedMovie>,
                              val context: Context
-) : RecyclerView.Adapter<WatchListMovieAdapter.ViewHolder>(){
+) : RecyclerView.Adapter<FavouriesMovieAdapter.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_recycleview_main,parent,false)
         return ViewHolder(v)
@@ -46,7 +44,7 @@ class WatchListMovieAdapter (private val activity: Activity,
 
     }
 
-    class ViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView){
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val ivItemRecycleView = itemView.findViewById(R.id.ivItemRecycleView) as ImageView
 
 
