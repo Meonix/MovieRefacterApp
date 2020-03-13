@@ -12,10 +12,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
+import com.mionix.myapplication.localDataBase.WatchListTable
 import com.mionix.myapplication.model.LocalSavedMovie
 
 class WatchListMovieAdapter (private val activity: Activity,
-                             private val watchMovieList: MutableList<LocalSavedMovie>,
+                             private val watchMovieList: MutableList<WatchListTable>,
                              val context: Context
 ) : RecyclerView.Adapter<WatchListMovieAdapter.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,7 +35,7 @@ class WatchListMovieAdapter (private val activity: Activity,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val watchMovieList= watchMovieList[position]
-        val castPosterURL = POSTER_BASE_URL + watchMovieList.poster
+        val castPosterURL = POSTER_BASE_URL + watchMovieList.colPoster
 
         //load image form https url into view holder (see build gradle)
         Glide.with(context) //1
@@ -50,7 +51,7 @@ class WatchListMovieAdapter (private val activity: Activity,
         val ivItemRecycleView = itemView.findViewById(R.id.ivItemRecycleView) as ImageView
 
 
-        fun bind(watchMovieList: LocalSavedMovie)
+        fun bind(watchMovieList: WatchListTable)
         {
 //            itemView.setOnClickListener {
 //                clickListener.onItemClicked(listPopularMovie)

@@ -4,6 +4,8 @@ package com.mionix.myapplication.view.fragment
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +13,14 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 
 import com.mionix.myapplication.R
+import com.mionix.myapplication.localDataBase.FavouritesTable
+import com.mionix.myapplication.localDataBase.MovieLocalDB
 import com.mionix.myapplication.localDataBase.MovieLocalDatabase
+import com.mionix.myapplication.localDataBase.WatchListTable
 import com.mionix.myapplication.model.LocalSavedMovie
 import com.mionix.myapplication.view.adapter.FavouriesMovieAdapter
 import com.mionix.myapplication.view.adapter.WatchListMovieAdapter
@@ -29,8 +35,8 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
     private var rvFavouritesMovie :RecyclerView? = null
     private var llLibrary1 : LinearLayout? = null
     private var llLibrary2 : LinearLayout? = null
-    private var listFavouriesMovie : MutableList<LocalSavedMovie> = mutableListOf()
-    private var watchListMovie : MutableList<LocalSavedMovie> = mutableListOf()
+    private var listFavouriesMovie : MutableList<FavouritesTable> = mutableListOf()
+    private var watchListMovie : MutableList<WatchListTable> = mutableListOf()
     private var mAuth: FirebaseAuth? = null
     private var adapterWatchListMovieView : WatchListMovieAdapter? = null
     private var adapterFavouriesMovieView : FavouriesMovieAdapter? = null
@@ -48,23 +54,36 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
     }
 
     private fun initData() {
-        val db = MovieLocalDatabase(homeFragmentcontext)
-        val favouritesMovieData = db.readFavouriteListData()
+        val db = Room.databaseBuilder(homeFragmentcontext
+            , MovieLocalDB::class.java
+            ,"MyMovieDB")
+            .fallbackToDestructiveMigration()
+            .build()
+        Thread{
+                val favouritesMovieData = db.movieDAO().readAllFavouriesMovie()
+                listFavouriesMovie.clear()
+                listFavouriesMovie.addAll(favouritesMovieData)
+                adapterFavouriesMovieView = FavouriesMovieAdapter(homeFragmentactivity,
+                    listFavouriesMovie,homeFragmentcontext)
+            homeFragmentactivity.runOnUiThread(Runnable {
+                rvFavouritesMovie!!.adapter = adapterFavouriesMovieView
+                rvFavouritesMovie!!.adapter!!.notifyDataSetChanged()
+            })
+        }.start()
 
-        listFavouriesMovie.clear()
-        listFavouriesMovie.addAll(favouritesMovieData)
-        adapterFavouriesMovieView = FavouriesMovieAdapter(homeFragmentactivity,
-            listFavouriesMovie,homeFragmentcontext)
-        rvFavouritesMovie!!.adapter = adapterFavouriesMovieView
-        rvFavouritesMovie!!.adapter!!.notifyDataSetChanged()
+        Thread{
+            val watchMovieData = db.movieDAO().readAllWatchListTable()
+            watchListMovie.clear()
+            watchListMovie.addAll(watchMovieData)
+            adapterWatchListMovieView = WatchListMovieAdapter(homeFragmentactivity,
+                watchListMovie,homeFragmentcontext)
+            homeFragmentactivity.runOnUiThread(Runnable {
+                rvWatchListMovie!!.adapter = adapterWatchListMovieView
+                rvWatchListMovie!!.adapter!!.notifyDataSetChanged()
+            })
 
-        val watchMovieData = db.readWatchListData()
-        watchListMovie.clear()
-        watchListMovie.addAll(watchMovieData)
-        adapterWatchListMovieView = WatchListMovieAdapter(homeFragmentactivity,
-            watchListMovie,homeFragmentcontext)
-        rvWatchListMovie!!.adapter = adapterWatchListMovieView
-        rvWatchListMovie!!.adapter!!.notifyDataSetChanged()
+        }.start()
+
 
     }
 
@@ -103,5 +122,4 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
         super.onStart()
         initData()
     }
-
 }
