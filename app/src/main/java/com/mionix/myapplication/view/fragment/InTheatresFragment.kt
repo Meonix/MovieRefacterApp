@@ -21,7 +21,7 @@ import com.mionix.myapplication.view.MovieDetail
 import com.mionix.myapplication.view.adapter.OnItemClickListener
 import com.mionix.myapplication.view.adapter.PopularMovieAdapter
 import com.mionix.myapplication.view.adapter.VietNamMovieAdapter
-import com.mionix.myapplication.viewModel.MainViewModel
+import com.mionix.myapplication.viewModel.InTheatresViewModel
 import kotlinx.android.synthetic.main.item_recycleview_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -30,11 +30,11 @@ import java.util.*
  * A simple [Fragment] subclass.
  */
 class InTheatresFragment(context : Context, activity: Activity) : Fragment(), OnItemClickListener {
-    private lateinit var vietnamMovierecyclerView: RecyclerView
-    private lateinit var adapterVietNamMovieView : VietNamMovieAdapter
+    private var vietnamMovierecyclerView: RecyclerView? = null
+    private var adapterVietNamMovieView : VietNamMovieAdapter? = null
     private val listVietNamMovie :MutableList<Result> = mutableListOf()
-    private val myViewModel : MainViewModel by viewModel()
-    private lateinit var vietnamMovieGridLayoutManager: GridLayoutManager
+    private val inTheatresViewModel : InTheatresViewModel by viewModel()
+    private var vietnamMovieGridLayoutManager: GridLayoutManager? = null
     private var inTheatresFragmentcontext = context
     private var inTheatresFragmentactivity = activity
     override fun onCreateView(
@@ -49,28 +49,28 @@ class InTheatresFragment(context : Context, activity: Activity) : Fragment(), On
     }
 
     private fun setupViewModel(homeFragmentcontext: Context, homeFragmentactivity: Activity) {
-        myViewModel.getVietNamMovie()
-        myViewModel.getVietNamMovie.observe(this,androidx.lifecycle.Observer {
+        inTheatresViewModel.getVietNamMovie()
+        inTheatresViewModel.getVietNamMovie.observe(this,androidx.lifecycle.Observer {
             listVietNamMovie.clear()
             listVietNamMovie.addAll(it.results)
-            vietnamMovierecyclerView.adapter!!.notifyDataSetChanged()
+            vietnamMovierecyclerView!!.adapter!!.notifyDataSetChanged()
         })
         adapterVietNamMovieView =
             VietNamMovieAdapter(homeFragmentactivity
                 ,listVietNamMovie
                 ,homeFragmentcontext
                 ,this)
-        vietnamMovierecyclerView.adapter = adapterVietNamMovieView
+        vietnamMovierecyclerView!!.adapter = adapterVietNamMovieView
     }
 
     private fun initView(inTheatresFragment: View) {
         vietnamMovieGridLayoutManager = GridLayoutManager(context,3)
-        vietnamMovieGridLayoutManager.orientation = GridLayoutManager.VERTICAL
+        vietnamMovieGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
 
         vietnamMovierecyclerView = inTheatresFragment.findViewById(R.id.rvVietNamMovie)
-        vietnamMovierecyclerView.layoutManager = vietnamMovieGridLayoutManager
-        vietnamMovierecyclerView.isNestedScrollingEnabled = true
-        vietnamMovierecyclerView.setHasFixedSize(true)
+        vietnamMovierecyclerView!!.layoutManager = vietnamMovieGridLayoutManager
+        vietnamMovierecyclerView!!.isNestedScrollingEnabled = true
+        vietnamMovierecyclerView!!.setHasFixedSize(true)
     }
     override fun onItemClicked(listPopularMovie: Result) {
         val moviePosterURL = POSTER_BASE_URL + listPopularMovie.posterPath

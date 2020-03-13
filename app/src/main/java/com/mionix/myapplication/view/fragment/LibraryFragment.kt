@@ -23,17 +23,17 @@ import com.mionix.myapplication.view.adapter.WatchListMovieAdapter
  * A simple [Fragment] subclass.
  */
 class LibraryFragment(context : Context, activity: Activity) : Fragment() {
-    private lateinit var watchListGridLayoutManager: GridLayoutManager
-    private lateinit var favouritesListGridLayoutManager: GridLayoutManager
-    private lateinit var rvWatchListMovie :RecyclerView
-    private lateinit var rvFavouritesMovie :RecyclerView
-    private lateinit var llLibrary1 : LinearLayout
-    private lateinit var llLibrary2 : LinearLayout
+    private var watchListGridLayoutManager: GridLayoutManager? = null
+    private var favouritesListGridLayoutManager: GridLayoutManager? = null
+    private var rvWatchListMovie :RecyclerView? = null
+    private var rvFavouritesMovie :RecyclerView? = null
+    private var llLibrary1 : LinearLayout? = null
+    private var llLibrary2 : LinearLayout? = null
     private var listFavouriesMovie : MutableList<LocalSavedMovie> = mutableListOf()
     private var watchListMovie : MutableList<LocalSavedMovie> = mutableListOf()
     private var mAuth: FirebaseAuth? = null
-    private lateinit var adapterWatchListMovieView : WatchListMovieAdapter
-    private lateinit var adapterFavouriesMovieView : FavouriesMovieAdapter
+    private var adapterWatchListMovieView : WatchListMovieAdapter? = null
+    private var adapterFavouriesMovieView : FavouriesMovieAdapter? = null
     private var homeFragmentcontext = context
     private var homeFragmentactivity = activity
     override fun onCreateView(
@@ -55,34 +55,34 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
         listFavouriesMovie.addAll(favouritesMovieData)
         adapterFavouriesMovieView = FavouriesMovieAdapter(homeFragmentactivity,
             listFavouriesMovie,homeFragmentcontext)
-        rvFavouritesMovie.adapter = adapterFavouriesMovieView
-        rvFavouritesMovie.adapter!!.notifyDataSetChanged()
+        rvFavouritesMovie!!.adapter = adapterFavouriesMovieView
+        rvFavouritesMovie!!.adapter!!.notifyDataSetChanged()
 
         val watchMovieData = db.readWatchListData()
         watchListMovie.clear()
         watchListMovie.addAll(watchMovieData)
         adapterWatchListMovieView = WatchListMovieAdapter(homeFragmentactivity,
             watchListMovie,homeFragmentcontext)
-        rvWatchListMovie.adapter = adapterWatchListMovieView
-        rvWatchListMovie.adapter!!.notifyDataSetChanged()
+        rvWatchListMovie!!.adapter = adapterWatchListMovieView
+        rvWatchListMovie!!.adapter!!.notifyDataSetChanged()
 
     }
 
     private fun initView(libraryFragment: View) {
         watchListGridLayoutManager = GridLayoutManager(context,3)
-        watchListGridLayoutManager.orientation = GridLayoutManager.VERTICAL
+        watchListGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
         favouritesListGridLayoutManager = GridLayoutManager(context,3)
-        favouritesListGridLayoutManager.orientation = GridLayoutManager.VERTICAL
+        favouritesListGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
 
         rvWatchListMovie = libraryFragment.findViewById(R.id.rvWatchListMovie)
-        rvWatchListMovie.layoutManager = watchListGridLayoutManager
-        rvWatchListMovie.isNestedScrollingEnabled = true
-        rvWatchListMovie.setHasFixedSize(true)
+        rvWatchListMovie!!.layoutManager = watchListGridLayoutManager
+        rvWatchListMovie!!.isNestedScrollingEnabled = true
+        rvWatchListMovie!!.setHasFixedSize(true)
 
         rvFavouritesMovie = libraryFragment.findViewById(R.id.rvFavouritesMovie)
-        rvFavouritesMovie.layoutManager = favouritesListGridLayoutManager
-        rvFavouritesMovie.isNestedScrollingEnabled = true
-        rvFavouritesMovie.setHasFixedSize(true)
+        rvFavouritesMovie!!.layoutManager = favouritesListGridLayoutManager
+        rvFavouritesMovie!!.isNestedScrollingEnabled = true
+        rvFavouritesMovie!!.setHasFixedSize(true)
 
 
         llLibrary1 = libraryFragment.findViewById(R.id.llLibrary1)
@@ -90,12 +90,12 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth!!.currentUser
         if(currentUser != null ){
-            llLibrary1.visibility = View.GONE
-            llLibrary2.visibility = View.VISIBLE
+            llLibrary1!!.visibility = View.GONE
+            llLibrary2!!.visibility = View.VISIBLE
         }
         else{
-            llLibrary1.visibility = View.VISIBLE
-            llLibrary2.visibility = View.GONE
+            llLibrary1!!.visibility = View.VISIBLE
+            llLibrary2!!.visibility = View.GONE
         }
     }
 

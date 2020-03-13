@@ -14,7 +14,6 @@ import com.mionix.myapplication.model.Result
 import com.mionix.myapplication.view.adapter.OnItemClickListener
 import com.mionix.myapplication.view.adapter.PopularMovieAdapter
 import com.mionix.myapplication.view.adapter.TabsAccessorAdapter
-import com.mionix.myapplication.viewModel.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(){

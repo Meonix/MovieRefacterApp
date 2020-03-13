@@ -37,6 +37,7 @@ import com.linecorp.linesdk.auth.LineLoginApi
 import com.linecorp.linesdk.auth.LineLoginResult
 import com.linecorp.linesdk.widget.LoginButton
 import com.mionix.myapplication.R
+import com.mionix.myapplication.viewModel.LoginViewModel
 import java.util.*
 
 class LoginActivity : AppCompatActivity() {
@@ -49,13 +50,14 @@ class LoginActivity : AppCompatActivity() {
     private var loginButton: Button? = null
     private var loadingBar: ProgressDialog? = null
     private var UserPassword: EditText? = null
-    private lateinit var toolbar : Toolbar
+    private var toolbar : Toolbar? = null
     private val REQUEST_CODE = 1
     private val RC_SIGN_IN = 2
     private lateinit var callbackManager: CallbackManager
     private var TAG :String = "FACELOG"
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var gso : GoogleSignInOptions
+    private lateinit var loginViewModel: LoginViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -112,11 +114,9 @@ class LoginActivity : AppCompatActivity() {
     private fun AllowUserToLogin() {
         val email = UserEmail!!.text.toString()
         val password = UserPassword!!.text.toString()
-        if (TextUtils.isEmpty(email)) {
-            Toast.makeText(this, "Please enter email....", Toast.LENGTH_SHORT).show()
-        }
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Please enter password....", Toast.LENGTH_SHORT).show()
+        loginViewModel = LoginViewModel(email,password)
+        if (!loginViewModel.checkInput()) {
+            Toast.makeText(this, "Please complete all information....", Toast.LENGTH_SHORT).show()
         } else {
             loadingBar!!.setTitle("Sign In")
             loadingBar!!.setMessage("Please wait....")
@@ -144,7 +144,6 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
     private fun SendUserToProfileActivity() {
         val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)

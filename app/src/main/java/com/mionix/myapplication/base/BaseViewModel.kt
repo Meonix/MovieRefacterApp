@@ -1,4 +1,4 @@
-package com.nice.app_ex.base
+package com.mionix.myapplication.base
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
