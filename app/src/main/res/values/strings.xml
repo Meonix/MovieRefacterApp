@@ -21,6 +21,6 @@
     <string name="userNotLoginYet">You need to login to your account to view this section</string>
     <string name="log_out">Log out</string>
     <string name="login">Login</string>
-    <string name="facebook_application_id" translatable="false">2529013863990063</string>
-    <string name="facebook_login_protocol_scheme" translatable="false">fb2529013863990063</string>
+    <string name="facebook_application_id" translatable="false">300057737639688</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb300057737639688</string>
 </resources>
