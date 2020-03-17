@@ -19,11 +19,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mionix.myapplication.R
 import com.mionix.myapplication.localDataBase.FavouritesTable
 import com.mionix.myapplication.localDataBase.MovieLocalDB
-import com.mionix.myapplication.localDataBase.MovieLocalDatabase
 import com.mionix.myapplication.localDataBase.WatchListTable
 import com.mionix.myapplication.model.LocalSavedMovie
 import com.mionix.myapplication.view.adapter.FavouriesMovieAdapter
 import com.mionix.myapplication.view.adapter.WatchListMovieAdapter
+import kotlinx.android.synthetic.main.fragment_library.*
 
 /**
  * A simple [Fragment] subclass.
@@ -31,8 +31,6 @@ import com.mionix.myapplication.view.adapter.WatchListMovieAdapter
 class LibraryFragment(context : Context, activity: Activity) : Fragment() {
     private var watchListGridLayoutManager: GridLayoutManager? = null
     private var favouritesListGridLayoutManager: GridLayoutManager? = null
-    private var rvWatchListMovie :RecyclerView? = null
-    private var rvFavouritesMovie :RecyclerView? = null
     private var llLibrary1 : LinearLayout? = null
     private var llLibrary2 : LinearLayout? = null
     private var listFavouriesMovie : MutableList<FavouritesTable> = mutableListOf()
@@ -48,9 +46,14 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val libraryFragment= inflater.inflate(R.layout.fragment_library, container, false)
-        initView(libraryFragment)
 
         return libraryFragment
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView(view)
+
     }
 
     private fun initData() {
@@ -93,12 +96,10 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
         favouritesListGridLayoutManager = GridLayoutManager(context,3)
         favouritesListGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
 
-        rvWatchListMovie = libraryFragment.findViewById(R.id.rvWatchListMovie)
         rvWatchListMovie!!.layoutManager = watchListGridLayoutManager
         rvWatchListMovie!!.isNestedScrollingEnabled = true
         rvWatchListMovie!!.setHasFixedSize(true)
 
-        rvFavouritesMovie = libraryFragment.findViewById(R.id.rvFavouritesMovie)
         rvFavouritesMovie!!.layoutManager = favouritesListGridLayoutManager
         rvFavouritesMovie!!.isNestedScrollingEnabled = true
         rvFavouritesMovie!!.setHasFixedSize(true)

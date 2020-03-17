@@ -17,26 +17,16 @@ import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
 import com.mionix.myapplication.localDataBase.FavouritesTable
 import com.mionix.myapplication.localDataBase.MovieLocalDB
-import com.mionix.myapplication.localDataBase.MovieLocalDatabase
 import com.mionix.myapplication.localDataBase.WatchListTable
 import com.mionix.myapplication.model.Cast
 import com.mionix.myapplication.model.Movie
 import com.mionix.myapplication.view.adapter.CastAdapter
 import com.mionix.myapplication.viewModel.MovileDetailViewModel
+import kotlinx.android.synthetic.main.activity_movie_detail.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MovieDetail : AppCompatActivity() {
-    private  var ivBackDropMovieDetail : ImageView? = null
-    private var ivMovieDetail : ImageView? = null
-    private var tvTitleDetailMovie : TextView? = null
-    private var tvReleaseDate : TextView? = null
-    private var tvGenre : TextView? = null
-    private var tvVote : TextView? = null
-    private var btAddToWatchList :Button? = null
-    private var btAddToFavourites :Button? = null
     private var poster_path:String? = null
-    private var tvDescriptionText : TextView? = null
-    private var rvCast : RecyclerView? = null
     private var adapterCastDetail : CastAdapter? = null
     private var linearLayoutManager : LinearLayoutManager? = null
     private var watchMovie : Movie? = null
@@ -145,30 +135,20 @@ class MovieDetail : AppCompatActivity() {
         movileDetailViewModel.getDataCastAndCrew(movie_id.toInt())
         movileDetailViewModel.getDataCastAndCrew.observe(this, Observer {
             listCast.addAll(it.cast)
-            rvCast!!.adapter!!.notifyDataSetChanged()
+            rvCastMovieDetail!!.adapter!!.notifyDataSetChanged()
         })
         adapterCastDetail = CastAdapter(this,listCast,this)
-        rvCast!!.adapter = adapterCastDetail
+        rvCastMovieDetail!!.adapter = adapterCastDetail
     }
 
     private fun initViewMovieDetail() {
         mAuth = FirebaseAuth.getInstance()
-        tvDescriptionText = findViewById(R.id.tvDescriptionText)
-        ivBackDropMovieDetail = findViewById(R.id.ivBackDropMovieDetail)
-        ivMovieDetail = findViewById(R.id.ivMovieDetail)
-        tvTitleDetailMovie = findViewById(R.id.tvTitleDetailMovie)
-        tvReleaseDate = findViewById(R.id.tvReleaseDate)
-        tvGenre = findViewById(R.id.tvGenre)
-        tvVote = findViewById(R.id.tvVote)
         tvVote!!.setCompoundDrawablesWithIntrinsicBounds(R.drawable.star,0,0,0)
-        btAddToWatchList = findViewById(R.id.btAddToWatchList)
-        btAddToFavourites = findViewById(R.id.btAddToFavourites)
-        rvCast =findViewById(R.id.rvCastMovieDetail)
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager!!.orientation = LinearLayoutManager.HORIZONTAL
 
-        rvCast!!.layoutManager = linearLayoutManager
-        rvCast!!.isNestedScrollingEnabled = true
-        rvCast!!.setHasFixedSize(true)
+        rvCastMovieDetail!!.layoutManager = linearLayoutManager
+        rvCastMovieDetail!!.isNestedScrollingEnabled = true
+        rvCastMovieDetail!!.setHasFixedSize(true)
     }
 }

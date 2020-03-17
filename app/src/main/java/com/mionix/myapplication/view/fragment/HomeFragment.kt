@@ -25,6 +25,7 @@ import com.mionix.myapplication.view.adapter.OnItemClickListener
 import com.mionix.myapplication.view.adapter.PopularMovieAdapter
 import com.mionix.myapplication.view.adapter.TopRateMovieAdapter
 import com.mionix.myapplication.viewModel.HomeFragmentViewModel
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.item_recycleview_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,11 +33,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * A simple [Fragment] subclass.
  */
 class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClickListener {
-    private var popularMovierecyclerView: RecyclerView? = null
-    private var topRateMovierecyclerView: RecyclerView? = null
     private var adapterPopularMovieView : PopularMovieAdapter? = null
     private var adapterTopRateMovieView : TopRateMovieAdapter? = null
-
 
     private val listPopularMovie :MutableList<Result> = mutableListOf()
     private val listTopRateMovie :MutableList<Result> = mutableListOf()
@@ -52,9 +50,13 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
     ): View? {
         // Inflate the layout for this fragment
         val homeFragment = inflater.inflate(R.layout.fragment_home, container, false)
-        initView(homeFragment)
-        setupViewModel(homeFragmentcontext,homeFragmentactivity)
         return homeFragment
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView(view)
+        setupViewModel(homeFragmentcontext,homeFragmentactivity)
     }
     private fun initView(homeFragment: View){
         popularMovieGridLayoutManager = GridLayoutManager(context,3)
@@ -62,15 +64,13 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
         topRateMovieGridLayoutManager = GridLayoutManager(context,3)
         topRateMovieGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
 
-        popularMovierecyclerView = homeFragment.findViewById(R.id.rvPopularMovie)
-        popularMovierecyclerView!!.layoutManager = popularMovieGridLayoutManager
-        popularMovierecyclerView!!.isNestedScrollingEnabled = true
-        popularMovierecyclerView!!.setHasFixedSize(true)
+        rvPopularMovie!!.layoutManager = popularMovieGridLayoutManager
+        rvPopularMovie!!.isNestedScrollingEnabled = true
+        rvPopularMovie!!.setHasFixedSize(true)
 
-        topRateMovierecyclerView = homeFragment.findViewById(R.id.rvTopRateMovie)
-        topRateMovierecyclerView!!.layoutManager = topRateMovieGridLayoutManager
-        topRateMovierecyclerView!!.isNestedScrollingEnabled = true
-        topRateMovierecyclerView!!.setHasFixedSize(true)
+        rvTopRateMovie!!.layoutManager = topRateMovieGridLayoutManager
+        rvTopRateMovie!!.isNestedScrollingEnabled = true
+        rvTopRateMovie!!.setHasFixedSize(true)
     }
     private fun setupViewModel(context :Context,activity: Activity) {
 
@@ -79,27 +79,27 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
         homeFragmentViewModel.getListPopularMovie.observe(this, Observer {
             listPopularMovie.clear()
             listPopularMovie.addAll(it.results)
-            popularMovierecyclerView!!.adapter!!.notifyDataSetChanged()
+            rvPopularMovie!!.adapter!!.notifyDataSetChanged()
         })
         adapterPopularMovieView =
             PopularMovieAdapter(activity
                 ,listPopularMovie
                 ,context
                 ,this)
-        popularMovierecyclerView!!.adapter = adapterPopularMovieView
+        rvPopularMovie!!.adapter = adapterPopularMovieView
         // get data and init Top Rated Movie Recycle View
         homeFragmentViewModel.getTopRateMovie(1)
         homeFragmentViewModel.getTopRateMovie.observe(this, Observer {
             listTopRateMovie.clear()
             listTopRateMovie.addAll(it.results)
-            topRateMovierecyclerView!!.adapter!!.notifyDataSetChanged()
+            rvTopRateMovie!!.adapter!!.notifyDataSetChanged()
         })
         adapterTopRateMovieView =
             TopRateMovieAdapter(activity
                 ,listTopRateMovie
                 ,context
                 ,this)
-        topRateMovierecyclerView!!.adapter = adapterTopRateMovieView
+        rvTopRateMovie!!.adapter = adapterTopRateMovieView
     }
 
     override fun onItemClicked(listPopularMovie: Result) {

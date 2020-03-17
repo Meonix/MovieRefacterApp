@@ -38,23 +38,18 @@ import com.linecorp.linesdk.auth.LineLoginResult
 import com.linecorp.linesdk.widget.LoginButton
 import com.mionix.myapplication.R
 import com.mionix.myapplication.viewModel.LoginViewModel
+import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
     private var mAuth: FirebaseAuth? = null
-    private var UsersRef: DatabaseReference? = null
+    private var usersRef: DatabaseReference? = null
     private var currentUser: FirebaseUser? = null
-    private var UserEmail: EditText? = null
-    private var registerButton: Button? = null
-    private var loginButton: Button? = null
     private var loadingBar: ProgressDialog? = null
-    private var UserPassword: EditText? = null
-    private var toolbar : Toolbar? = null
-    private val REQUEST_CODE = 1
-    private val RC_SIGN_IN = 2
+    private val requestCode = 1
+    private val rcSignIn = 2
     private lateinit var callbackManager: CallbackManager
-    private var TAG :String = "FACELOG"
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var gso : GoogleSignInOptions
     private lateinit var loginViewModel: LoginViewModel
@@ -62,20 +57,20 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         mAuth = FirebaseAuth.getInstance()
-        UsersRef = FirebaseDatabase.getInstance().reference.child("Users")
+        usersRef = FirebaseDatabase.getInstance().reference.child("Users")
 
-        InitializeFields()
+        initializeFields()
         currentUser = mAuth!!.currentUser
-        loginButton!!.setOnClickListener{ AllowUserToLogin() }
+        btLogin!!.setOnClickListener{ allowUserToLogin() }
 
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso)
-        InitLineLoginButton()
-        InitFacebookLoginButton()
-        InitGoogleLoginButton()
+        initLineLoginButton()
+        initFacebookLoginButton()
+        initGoogleLoginButton()
         // check Hash function in computer facebook SDK
 //        try {
 //            val info = packageManager.getPackageInfo(
@@ -93,27 +88,22 @@ class LoginActivity : AppCompatActivity() {
 //        } catch (e: NoSuchAlgorithmException) {
 //
 //        }
-        registerButton!!.setOnClickListener{ SendUserToRegisterActivity() }
+        btRegister!!.setOnClickListener{ sendUserToRegisterActivity() }
     }
 
-    private fun SendUserToRegisterActivity() {
+    private fun sendUserToRegisterActivity() {
         val registerIntent = Intent(this@LoginActivity, RegisterActivity::class.java)
         startActivity(registerIntent)
     }
 
-    private fun InitializeFields() {
-        registerButton = findViewById(R.id.btRegister)
-        loginButton =findViewById(R.id.btLogin)
-        UserEmail = findViewById(R.id.tietEmailLogin)
-        UserPassword = findViewById(R.id.tietPasswordLogin)
-        toolbar = findViewById(R.id.login_toolbar)
-        setSupportActionBar(toolbar)
+    private fun initializeFields() {
+        setSupportActionBar(login_toolbar as Toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         loadingBar = ProgressDialog(this)
     }
-    private fun AllowUserToLogin() {
-        val email = UserEmail!!.text.toString()
-        val password = UserPassword!!.text.toString()
+    private fun allowUserToLogin() {
+        val email = tietEmailLogin!!.text.toString()
+        val password = tietPasswordLogin!!.text.toString()
         loginViewModel = LoginViewModel(email,password)
         if (!loginViewModel.checkInput()) {
             Toast.makeText(this, "Please complete all information....", Toast.LENGTH_SHORT).show()
@@ -128,11 +118,11 @@ class LoginActivity : AppCompatActivity() {
                     val CurrentUserID = mAuth!!.currentUser!!.uid
                     val deviceToken = FirebaseInstanceId.getInstance().token
 
-                    UsersRef!!.child(CurrentUserID).child("device_token")
+                    usersRef!!.child(CurrentUserID).child("device_token")
                         .setValue(deviceToken)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                SendUserToProfileActivity()
+                                sendUserToProfileActivity()
                                 Toast.makeText(this@LoginActivity, "Logged in  Successful....", Toast.LENGTH_SHORT).show()
                                 loadingBar!!.dismiss()
                             }
@@ -145,12 +135,12 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-    private fun SendUserToProfileActivity() {
+    private fun sendUserToProfileActivity() {
         val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
         Toast.makeText(this,"login success..",Toast.LENGTH_SHORT).show()
         startActivity(mainIntent)
     }
-    private fun InitGoogleLoginButton(){
+    private fun initGoogleLoginButton(){
         val signIn = findViewById(R.id.btGoogleLogin) as SignInButton
         signIn.setOnClickListener {
                 view: View? -> signGoogle()
@@ -158,10 +148,10 @@ class LoginActivity : AppCompatActivity() {
     }
     private fun signGoogle() {
         val signIntent:Intent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signIntent,RC_SIGN_IN)
+        startActivityForResult(signIntent,rcSignIn)
     }
 
-    private fun InitLineLoginButton(){
+    private fun initLineLoginButton(){
         val loginDelegate = LoginDelegate.Factory.create()
         val loginButton = findViewById(R.id.line_login_btn) as LoginButton
         loginButton.setChannelId("1653882343")
@@ -198,7 +188,7 @@ class LoginActivity : AppCompatActivity() {
                         // .nonce("<a randomly-generated string>") // nonce can be used to improve security
                         .build()
                 )
-                startActivityForResult(loginIntent, REQUEST_CODE)
+                startActivityForResult(loginIntent, requestCode)
 
             } catch (e: Exception) {
                 Log.e("ERROR", e.toString())
@@ -206,7 +196,7 @@ class LoginActivity : AppCompatActivity() {
 
         }
     }
-    private fun InitFacebookLoginButton(){
+    private fun initFacebookLoginButton(){
         callbackManager = CallbackManager.Factory.create()
         val btFacebookLogin = findViewById(R.id.btFacebookLogin) as com.facebook.login.widget.LoginButton
         btFacebookLogin.setReadPermissions("email", "public_profile")
@@ -233,15 +223,15 @@ class LoginActivity : AppCompatActivity() {
         // Pass the activity result back to the Facebook SDK
         callbackManager.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == RC_SIGN_IN){
+        if(requestCode == rcSignIn){
             val task : Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleGoogleLoginResult(task)
         }
-        if (requestCode != REQUEST_CODE) {
+        if (requestCode != resultCode) {
             Log.e("ERROR", "Unsupported Request")
             return
         }
-        else if (requestCode == REQUEST_CODE){
+        else if (requestCode == resultCode){
            val result : LineLoginResult = LineLoginApi.getLoginResultFromIntent(data)
             if(result.responseCode == LineApiResponseCode.SUCCESS){
                 val accessToken = result.lineCredential!!.accessToken.tokenString
@@ -266,17 +256,17 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             //intent.putExtra("account",account)
             Toast.makeText(this,"login success..",Toast.LENGTH_SHORT).show()
-            FirebaseGoogleAuth(account)
+            firebaseGoogleAuth(account)
             startActivity(intent)
 
         }
         catch (e : ApiException){
             Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show()
-            FirebaseGoogleAuth(null)
+            firebaseGoogleAuth(null)
         }
     }
 
-    private fun FirebaseGoogleAuth(account: GoogleSignInAccount?) {
+    private fun firebaseGoogleAuth(account: GoogleSignInAccount?) {
         val authcredential : AuthCredential = GoogleAuthProvider.getCredential(account!!.idToken,null)
         mAuth!!.signInWithCredential(authcredential).addOnCompleteListener(this) {task ->
             if(task.isSuccessful){

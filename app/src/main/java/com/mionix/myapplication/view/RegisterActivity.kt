@@ -15,33 +15,30 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
 import com.mionix.myapplication.R
+import kotlinx.android.synthetic.main.activity_register.*
+
 class RegisterActivity : AppCompatActivity() {
-    private var CreateAccountButton: Button? = null
-    private var UserEmail: EditText? = null
-    private var UserPassword: EditText? = null
-    private var AlreadyHaveAccountLink: TextView? = null
 
     private var mAuth: FirebaseAuth? = null
-    private var RootRef: DatabaseReference? = null
+    private var rootRef: DatabaseReference? = null
     private var loadingBar: ProgressDialog? = null
-    private lateinit var toolbar : Toolbar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
         mAuth = FirebaseAuth.getInstance()
-        RootRef = FirebaseDatabase.getInstance().reference
-        InitializeFields()
+        rootRef = FirebaseDatabase.getInstance().reference
+        initializeFields()
 
-        AlreadyHaveAccountLink!!.setOnClickListener { SendUserToLoginActivity() }
-        CreateAccountButton!!.setOnClickListener { CreateNewAccount() }
+        already_have_account_link!!.setOnClickListener { sendUserToLoginActivity() }
+        register_button!!.setOnClickListener { createNewAccount() }
 
 
 
     }
 
-    private fun CreateNewAccount() {
-        val email = UserEmail!!.text.toString()
-        val password = UserPassword!!.text.toString()
+    private fun createNewAccount() {
+        val email = register_email!!.text.toString()
+        val password = register_password!!.text.toString()
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(this, "Please enter email....", Toast.LENGTH_SHORT).show()
         }
@@ -59,11 +56,11 @@ class RegisterActivity : AppCompatActivity() {
 
 
                     val currentUserID = mAuth!!.currentUser!!.uid
-                    RootRef!!.child("Users").child(currentUserID).setValue("")
+                    rootRef!!.child("Users").child(currentUserID).setValue("")
 
-                    RootRef!!.child("Users").child(currentUserID).child("device_token")
+                    rootRef!!.child("Users").child(currentUserID).child("device_token")
                         .setValue(deviceToken)
-                    SendUserToProfileActivity()
+                    sendUserToProfileActivity()
                     Toast.makeText(this@RegisterActivity, "Account created Successfully...", Toast.LENGTH_SHORT).show()
                     loadingBar!!.dismiss()
                 } else {
@@ -75,23 +72,18 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun InitializeFields() {
-        CreateAccountButton = findViewById(R.id.register_button)
-        UserEmail = findViewById(R.id.register_email)
-        UserPassword = findViewById(R.id.register_password)
-        AlreadyHaveAccountLink = findViewById(R.id.already_have_account_link)
+    private fun initializeFields() {
         loadingBar = ProgressDialog(this)
-        toolbar = findViewById(R.id.register_toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(register_toolbar as Toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
-    private fun SendUserToLoginActivity() {
+    private fun sendUserToLoginActivity() {
         val loginIntent = Intent(this@RegisterActivity, LoginActivity::class.java)
         startActivity(loginIntent)
     }
 
-    private fun SendUserToProfileActivity() {
+    private fun sendUserToProfileActivity() {
         val mainIntent = Intent(this@RegisterActivity, MainActivity::class.java)
         startActivity(mainIntent)
     }
