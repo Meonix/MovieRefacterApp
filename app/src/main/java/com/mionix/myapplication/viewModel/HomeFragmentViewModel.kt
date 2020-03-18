@@ -13,6 +13,7 @@ import com.mionix.myapplication.repo.ListTopRateMovieRepo
 class HomeFragmentViewModel(private val mListPopularMovie: ListPopularMovieRepo,
                             private val mListTopRateMovie: ListTopRateMovieRepo): BaseViewModel() {
 
+
     private val _getListPopularMovie = MutableLiveData<ListMovie>()
     val getListPopularMovie: LiveData<ListMovie> get() = _getListPopularMovie
     fun getListPopularMovie(page: Int) = executeUseCase {

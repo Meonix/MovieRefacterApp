@@ -4,7 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.TextUtils
+import androidx.lifecycle.Observer
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModel
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -39,6 +40,7 @@ import com.linecorp.linesdk.widget.LoginButton
 import com.mionix.myapplication.R
 import com.mionix.myapplication.viewModel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_login.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class LoginActivity : AppCompatActivity() {
@@ -52,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var callbackManager: CallbackManager
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var gso : GoogleSignInOptions
-    private lateinit var loginViewModel: LoginViewModel
+    private val loginViewModel: LoginViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -60,6 +62,7 @@ class LoginActivity : AppCompatActivity() {
         usersRef = FirebaseDatabase.getInstance().reference.child("Users")
 
         initializeFields()
+        setupViewModel()
         currentUser = mAuth!!.currentUser
         btLogin!!.setOnClickListener{ allowUserToLogin() }
 
@@ -100,40 +103,42 @@ class LoginActivity : AppCompatActivity() {
         setSupportActionBar(login_toolbar as Toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         loadingBar = ProgressDialog(this)
+        loadingBar!!.setTitle("Sign In")
+        loadingBar!!.setMessage("Please wait....")
+        loadingBar!!.setCanceledOnTouchOutside(false)
     }
-    private fun allowUserToLogin() {
-        val email = tietEmailLogin!!.text.toString()
-        val password = tietPasswordLogin!!.text.toString()
-        loginViewModel = LoginViewModel(email,password)
-        if (!loginViewModel.checkInput()) {
-            Toast.makeText(this, "Please complete all information....", Toast.LENGTH_SHORT).show()
-        } else {
-            loadingBar!!.setTitle("Sign In")
-            loadingBar!!.setMessage("Please wait....")
-            loadingBar!!.setCanceledOnTouchOutside(false)
-            loadingBar!!.show()
-
-            mAuth!!.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val CurrentUserID = mAuth!!.currentUser!!.uid
-                    val deviceToken = FirebaseInstanceId.getInstance().token
-
-                    usersRef!!.child(CurrentUserID).child("device_token")
-                        .setValue(deviceToken)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                sendUserToProfileActivity()
-                                Toast.makeText(this@LoginActivity, "Logged in  Successful....", Toast.LENGTH_SHORT).show()
-                                loadingBar!!.dismiss()
-                            }
-                        }
-                } else {
-                    val message = task.exception!!.toString()
-                    Toast.makeText(this@LoginActivity, "Error :$message", Toast.LENGTH_SHORT).show()
-                    loadingBar!!.dismiss()
-                }
+    private fun setupViewModel() {
+        loginViewModel.isLoading.observe(this,Observer {
+            if(it)
+                loadingBar!!.show()
+            else
+                loadingBar!!.dismiss()
+        })
+        loginViewModel.emailError.observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        })
+        loginViewModel.passwordError.observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        })
+        loginViewModel.isLoginSucess.observe(this, Observer {
+            if(it == true){
+                sendUserToProfileActivity()
+                Toast.makeText(this@LoginActivity, "Logged in  Successful....", Toast.LENGTH_SHORT).show()
             }
-        }
+            else{
+                loginViewModel.messageLoginError.observe(this, Observer { error ->
+                    Toast.makeText(this@LoginActivity, error, Toast.LENGTH_SHORT).show()
+                })
+            }
+        })
+    }
+
+
+    private fun allowUserToLogin() {
+        loginViewModel.signUp(
+            tietEmailLogin.text!!.trim().toString(),
+            tietPasswordLogin.text!!.trim().toString()
+        )
     }
     private fun sendUserToProfileActivity() {
         val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
