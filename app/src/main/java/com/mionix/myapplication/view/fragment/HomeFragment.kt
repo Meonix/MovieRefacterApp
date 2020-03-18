@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,7 @@ import com.mionix.myapplication.view.adapter.OnItemClickListener
 import com.mionix.myapplication.view.adapter.PopularMovieAdapter
 import com.mionix.myapplication.view.adapter.TopRateMovieAdapter
 import com.mionix.myapplication.viewModel.HomeFragmentViewModel
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.item_recycleview_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -35,6 +37,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClickListener {
     private var adapterPopularMovieView : PopularMovieAdapter? = null
     private var adapterTopRateMovieView : TopRateMovieAdapter? = null
+    private var pageTopRate = 1
+    private var pagePopular = 1
+    private var popularIsLoading = true
+    private var topRateIsLoading = true
 
     private val listPopularMovie :MutableList<Result> = mutableListOf()
     private val listTopRateMovie :MutableList<Result> = mutableListOf()
@@ -55,14 +61,16 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView(view)
+        listPopularMovie.clear()
+        listTopRateMovie.clear()
+        initView()
         setupViewModel(homeFragmentcontext,homeFragmentactivity)
     }
-    private fun initView(homeFragment: View){
+    private fun initView(){
         popularMovieGridLayoutManager = GridLayoutManager(context,3)
-        popularMovieGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
+        popularMovieGridLayoutManager!!.orientation = GridLayoutManager.HORIZONTAL
         topRateMovieGridLayoutManager = GridLayoutManager(context,3)
-        topRateMovieGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
+        topRateMovieGridLayoutManager!!.orientation = GridLayoutManager.HORIZONTAL
 
         rvPopularMovie!!.layoutManager = popularMovieGridLayoutManager
         rvPopularMovie!!.isNestedScrollingEnabled = true
@@ -75,9 +83,9 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
     private fun setupViewModel(context :Context,activity: Activity) {
 
         // get data and init PopularMovie Recycle View
-        homeFragmentViewModel.getListPopularMovie(1)
+        homeFragmentViewModel.getListPopularMovie(pagePopular)
         homeFragmentViewModel.getListPopularMovie.observe(this, Observer {
-            listPopularMovie.clear()
+
             listPopularMovie.addAll(it.results)
             rvPopularMovie!!.adapter!!.notifyDataSetChanged()
         })
@@ -87,10 +95,31 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
                 ,context
                 ,this)
         rvPopularMovie!!.adapter = adapterPopularMovieView
+
+        rvPopularMovie!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dx > 0) {
+                val visibleItemCount = popularMovieGridLayoutManager!!.childCount
+                val pastVisibleItem = popularMovieGridLayoutManager!!.findFirstCompletelyVisibleItemPosition()
+                val total = adapterTopRateMovieView!!.itemCount
+                if (popularIsLoading) {
+                    if ((visibleItemCount + pastVisibleItem) >= total) {
+                        pagePopular += 1
+
+                        getPopularPage()
+                        popularIsLoading = false
+                    }
+                }
+              }
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+        })
+
         // get data and init Top Rated Movie Recycle View
-        homeFragmentViewModel.getTopRateMovie(1)
+        homeFragmentViewModel.getTopRateMovie(pageTopRate)
         homeFragmentViewModel.getTopRateMovie.observe(this, Observer {
-            listTopRateMovie.clear()
+
             listTopRateMovie.addAll(it.results)
             rvTopRateMovie!!.adapter!!.notifyDataSetChanged()
         })
@@ -100,6 +129,25 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
                 ,context
                 ,this)
         rvTopRateMovie!!.adapter = adapterTopRateMovieView
+
+        rvTopRateMovie.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                if (dx > 0) {
+                val visibleItemCount = topRateMovieGridLayoutManager!!.childCount
+                val pastVisibleItem = topRateMovieGridLayoutManager!!.findFirstCompletelyVisibleItemPosition()
+                val total = adapterTopRateMovieView!!.itemCount
+                if (topRateIsLoading) {
+                    if ((visibleItemCount + pastVisibleItem) >= total) {
+                        pageTopRate += 1
+
+                        getTopRatePage()
+                        topRateIsLoading = false
+                    }
+                }
+//              }
+                super.onScrolled(recyclerView, dx, dy)
+            }
+        })
     }
 
     override fun onItemClicked(listPopularMovie: Result) {
@@ -114,4 +162,28 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
         startActivity(intent,options.toBundle())
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        this.clearFindViewByIdCache()
+    }
+    private fun getPopularPage(){
+        popularIsLoading = true
+        popularProgressBar.visibility = View.VISIBLE
+        Handler().postDelayed({
+            homeFragmentViewModel.getListPopularMovie(pagePopular)
+            popularProgressBar.visibility = View.GONE
+
+            popularIsLoading = true
+        },1200)
+    }
+    private fun getTopRatePage(){
+        topRateIsLoading = true
+        topRateProgressBar.visibility = View.VISIBLE
+        Handler().postDelayed({
+            homeFragmentViewModel.getTopRateMovie(pageTopRate)
+            topRateProgressBar.visibility = View.GONE
+
+            topRateIsLoading = true
+        },1200)
+    }
 }

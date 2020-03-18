@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 import com.mionix.myapplication.R
 import com.mionix.myapplication.view.LoginActivity
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_account.*
 
 /**
@@ -33,7 +34,7 @@ class AccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView(view)
+        initView()
         btLogin!!.setOnClickListener {
             val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
@@ -47,7 +48,7 @@ class AccountFragment : Fragment() {
         }
     }
 
-    private fun initView(accountFragment: View) {
+    private fun initView() {
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth!!.currentUser
         if(currentUser != null ){
@@ -59,6 +60,9 @@ class AccountFragment : Fragment() {
             btLogout!!.visibility = View.INVISIBLE
         }
     }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        this.clearFindViewByIdCache()
+    }
 
 }

@@ -22,6 +22,7 @@ import com.mionix.myapplication.view.adapter.OnItemClickListener
 import com.mionix.myapplication.view.adapter.PopularMovieAdapter
 import com.mionix.myapplication.view.adapter.VietNamMovieAdapter
 import com.mionix.myapplication.viewModel.InTheatresViewModel
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_in_theatres.*
 import kotlinx.android.synthetic.main.item_recycleview_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -49,7 +50,7 @@ class InTheatresFragment(context : Context, activity: Activity) : Fragment(), On
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView(view)
+        initView()
         setupViewModel(inTheatresFragmentcontext,inTheatresFragmentactivity)
     }
 
@@ -68,7 +69,7 @@ class InTheatresFragment(context : Context, activity: Activity) : Fragment(), On
         rvVietNamMovie!!.adapter = adapterVietNamMovieView
     }
 
-    private fun initView(inTheatresFragment: View) {
+    private fun initView() {
         vietnamMovieGridLayoutManager = GridLayoutManager(context,3)
         vietnamMovieGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
 
@@ -87,6 +88,9 @@ class InTheatresFragment(context : Context, activity: Activity) : Fragment(), On
                 , ViewCompat.getTransitionName(ivItemRecycleView).toString())
         startActivity(intent,options.toBundle())
     }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        this.clearFindViewByIdCache()
+    }
 
 }

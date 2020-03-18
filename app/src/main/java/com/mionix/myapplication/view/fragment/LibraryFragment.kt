@@ -23,6 +23,7 @@ import com.mionix.myapplication.localDataBase.WatchListTable
 import com.mionix.myapplication.model.LocalSavedMovie
 import com.mionix.myapplication.view.adapter.FavouriesMovieAdapter
 import com.mionix.myapplication.view.adapter.WatchListMovieAdapter
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_library.*
 
 /**
@@ -31,8 +32,6 @@ import kotlinx.android.synthetic.main.fragment_library.*
 class LibraryFragment(context : Context, activity: Activity) : Fragment() {
     private var watchListGridLayoutManager: GridLayoutManager? = null
     private var favouritesListGridLayoutManager: GridLayoutManager? = null
-    private var llLibrary1 : LinearLayout? = null
-    private var llLibrary2 : LinearLayout? = null
     private var listFavouriesMovie : MutableList<FavouritesTable> = mutableListOf()
     private var watchListMovie : MutableList<WatchListTable> = mutableListOf()
     private var mAuth: FirebaseAuth? = null
@@ -52,7 +51,7 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView(view)
+        initView()
 
     }
 
@@ -90,7 +89,7 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
 
     }
 
-    private fun initView(libraryFragment: View) {
+    private fun initView() {
         watchListGridLayoutManager = GridLayoutManager(context,3)
         watchListGridLayoutManager!!.orientation = GridLayoutManager.VERTICAL
         favouritesListGridLayoutManager = GridLayoutManager(context,3)
@@ -105,8 +104,6 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
         rvFavouritesMovie!!.setHasFixedSize(true)
 
 
-        llLibrary1 = libraryFragment.findViewById(R.id.llLibrary1)
-        llLibrary2 = libraryFragment.findViewById(R.id.llLibrary2)
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth!!.currentUser
         if(currentUser != null ){
@@ -122,5 +119,9 @@ class LibraryFragment(context : Context, activity: Activity) : Fragment() {
     override fun onStart() {
         super.onStart()
         initData()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        this.clearFindViewByIdCache()
     }
 }
