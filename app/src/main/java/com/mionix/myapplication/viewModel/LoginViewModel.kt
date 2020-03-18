@@ -92,9 +92,14 @@ class LoginViewModel : BaseViewModel() {
         }
     }
     private fun firebaseGoogleAuth(account: GoogleSignInAccount?) {
-        val authcredential : AuthCredential = GoogleAuthProvider.getCredential(account!!.idToken,null)
-        mAuth.signInWithCredential(authcredential).addOnCompleteListener {task ->
-            _isLoginGoogleSucess.value = task.isSuccessful
+        if(account!=null){
+            val authcredential : AuthCredential = GoogleAuthProvider.getCredential(account!!.idToken,null)
+            mAuth.signInWithCredential(authcredential).addOnCompleteListener {task ->
+                _isLoginGoogleSucess.value = task.isSuccessful
+            }
+        }
+        else{
+            _messageLoginError.value = "Please login by an account Google"
         }
     }
 
