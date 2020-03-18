@@ -1,9 +1,6 @@
 package com.mionix.myapplication.di
 
-import com.mionix.myapplication.viewModel.HomeFragmentViewModel
-import com.mionix.myapplication.viewModel.InTheatresViewModel
-import com.mionix.myapplication.viewModel.LoginViewModel
-import com.mionix.myapplication.viewModel.MovileDetailViewModel
+import com.mionix.myapplication.viewModel.*
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -12,4 +9,5 @@ val viewModelModule = module {
     viewModel { HomeFragmentViewModel(get(),get()) }
     viewModel { MovileDetailViewModel(get(),get()) }
     viewModel { LoginViewModel() }
+    viewModel { RegisterViewModel() }
 }
