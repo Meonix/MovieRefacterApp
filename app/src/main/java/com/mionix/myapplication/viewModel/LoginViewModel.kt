@@ -6,7 +6,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
@@ -18,7 +23,9 @@ import java.util.regex.Pattern
 class LoginViewModel : BaseViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     private val _isLoginSucess = MutableLiveData<Boolean>()
+    private val _isLoginGoogleSucess = MutableLiveData<Boolean>()
     private val _emailError = MutableLiveData<String>()
+    private val _emailUserName = MutableLiveData<String>()
     private val _messageLoginError = MutableLiveData<String>()
     private val _passwordError = MutableLiveData<String>()
     private var mAuth = FirebaseAuth.getInstance()
@@ -30,8 +37,14 @@ class LoginViewModel : BaseViewModel() {
     val isLoginSucess: LiveData<Boolean>
         get() = _isLoginSucess
 
+    val isLoginGoogleSucess: LiveData<Boolean>
+        get() = _isLoginGoogleSucess
+
     val emailError: LiveData<String>
         get() = _emailError
+
+    val emailUserName: LiveData<String>
+        get() = _emailUserName
 
     val messageLoginError: LiveData<String>
         get() = _messageLoginError
@@ -67,6 +80,24 @@ class LoginViewModel : BaseViewModel() {
             }
         }
     }
+    fun signUpWithGoogle(task : Task<GoogleSignInAccount>){
+        try {
+            val account : GoogleSignInAccount = task.getResult(ApiException::class.java)!!
+            firebaseGoogleAuth(account)
+            _emailUserName.value = account.email
+        }
+        catch (e : ApiException){
+            _messageLoginError.value = e.toString()
+            firebaseGoogleAuth(null)
+        }
+    }
+    private fun firebaseGoogleAuth(account: GoogleSignInAccount?) {
+        val authcredential : AuthCredential = GoogleAuthProvider.getCredential(account!!.idToken,null)
+        mAuth.signInWithCredential(authcredential).addOnCompleteListener {task ->
+            _isLoginGoogleSucess.value = task.isSuccessful
+        }
+    }
+
     private fun isValidInput(email: String, password: String): Boolean{
         if(email.isEmpty()){
             _emailError.value = "Email is empty"

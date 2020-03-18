@@ -131,6 +131,21 @@ class LoginActivity : AppCompatActivity() {
                 })
             }
         })
+        loginViewModel.isLoginGoogleSucess.observe(this, Observer {
+            if(it){
+                loginViewModel.emailUserName.observe(this, Observer {email ->
+                    Toast.makeText(this,email,Toast.LENGTH_SHORT).show()
+                })
+                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                //intent.putExtra("account",account)
+                Toast.makeText(this,"login success..",Toast.LENGTH_SHORT).show()
+                startActivity(intent)
+            }else{
+                loginViewModel.messageLoginError.observe(this , Observer { error->
+                    Toast.makeText(this, "Failed cause $error",Toast.LENGTH_SHORT).show()
+                })
+            }
+        })
     }
 
 
@@ -230,7 +245,7 @@ class LoginActivity : AppCompatActivity() {
 
         if(requestCode == rcSignIn){
             val task : Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleGoogleLoginResult(task)
+            loginViewModel.signUpWithGoogle(task)
         }
         if (requestCode != resultCode) {
             Log.e("ERROR", "Unsupported Request")
@@ -250,35 +265,6 @@ class LoginActivity : AppCompatActivity() {
             }
             else if (result.responseCode == LineApiResponseCode.CANCEL){
 //                Toast.makeText(this,result.errorData.toString(),Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun handleGoogleLoginResult(task : Task<GoogleSignInAccount>) {
-        try {
-            val account : GoogleSignInAccount = task.getResult(ApiException::class.java)!!
-            Toast.makeText(this,account.email,Toast.LENGTH_SHORT).show()
-            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-            //intent.putExtra("account",account)
-            Toast.makeText(this,"login success..",Toast.LENGTH_SHORT).show()
-            firebaseGoogleAuth(account)
-            startActivity(intent)
-
-        }
-        catch (e : ApiException){
-            Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show()
-            firebaseGoogleAuth(null)
-        }
-    }
-
-    private fun firebaseGoogleAuth(account: GoogleSignInAccount?) {
-        val authcredential : AuthCredential = GoogleAuthProvider.getCredential(account!!.idToken,null)
-        mAuth!!.signInWithCredential(authcredential).addOnCompleteListener(this) {task ->
-            if(task.isSuccessful){
-                Toast.makeText(this,"Success",Toast.LENGTH_SHORT).show()
-            }
-            else{
-                Toast.makeText(this,"Failed",Toast.LENGTH_SHORT).show()
             }
         }
     }
