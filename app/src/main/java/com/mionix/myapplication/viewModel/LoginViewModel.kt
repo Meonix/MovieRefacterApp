@@ -59,10 +59,10 @@ class LoginViewModel : BaseViewModel() {
                 _isLoading.value = true
                 mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val CurrentUserID = mAuth.currentUser!!.uid
+                        val CurrentUserID  = mAuth.currentUser?.uid
                         val deviceToken = FirebaseInstanceId.getInstance().token
 
-                        usersRef.child(CurrentUserID).child("device_token")
+                        usersRef.child(CurrentUserID.toString()).child("device_token")
                             .setValue(deviceToken)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
@@ -71,7 +71,7 @@ class LoginViewModel : BaseViewModel() {
                                 }
                             }
                     } else {
-                        val message = task.exception!!.toString()
+                        val message = task.exception.toString()
                         _messageLoginError.value = message
                         _isLoginSucess.value = false
                         _isLoading.value = false
@@ -82,9 +82,9 @@ class LoginViewModel : BaseViewModel() {
     }
     fun signUpWithGoogle(task : Task<GoogleSignInAccount>){
         try {
-            val account : GoogleSignInAccount = task.getResult(ApiException::class.java)!!
+            val account  = task.getResult(ApiException::class.java)
             firebaseGoogleAuth(account)
-            _emailUserName.value = account.email
+            _emailUserName.value = account?.email
         }
         catch (e : ApiException){
             _messageLoginError.value = e.toString()
@@ -93,7 +93,7 @@ class LoginViewModel : BaseViewModel() {
     }
     private fun firebaseGoogleAuth(account: GoogleSignInAccount?) {
         if(account!=null){
-            val authcredential : AuthCredential = GoogleAuthProvider.getCredential(account!!.idToken,null)
+            val authcredential : AuthCredential = GoogleAuthProvider.getCredential(account.idToken,null)
             mAuth.signInWithCredential(authcredential).addOnCompleteListener {task ->
                 _isLoginGoogleSucess.value = task.isSuccessful
             }

@@ -6,14 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
 import com.mionix.myapplication.model.Result
-class TopRateMovieAdapter(private val activity: Activity,
+class TopRateMovieAdapter(private val activity: FragmentActivity?,
                           private val topRateMovieList: MutableList<Result>,
-                          val context: Context,
+                          val context: Context?,
                           val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<TopRateMovieAdapter.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -35,9 +36,11 @@ class TopRateMovieAdapter(private val activity: Activity,
         val moviePosterURL = POSTER_BASE_URL + topRateMovieList.posterPath
 
         //load image form https url into view holder (see build gradle)
-        Glide.with(activity) //1
-            .load(moviePosterURL)
-            .into(holder.ivPopularMovie)
+        activity?.let {
+            Glide.with(it) //1
+                .load(moviePosterURL)
+                .into(holder.ivPopularMovie)
+        }
         //
         holder.bind(topRateMovieList,itemClickListener)
 

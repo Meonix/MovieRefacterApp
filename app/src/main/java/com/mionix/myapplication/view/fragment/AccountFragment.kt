@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_account.*
  * A simple [Fragment] subclass.
  */
 class AccountFragment : Fragment() {
-    private var mAuth: FirebaseAuth? = null
+    private lateinit var mAuth: FirebaseAuth
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,29 +35,29 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        btLogin!!.setOnClickListener {
+        btLogin.setOnClickListener {
             val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
         }
-        btLogout!!.setOnClickListener {
-            mAuth!!.signOut()
+        btLogout.setOnClickListener {
+            mAuth.signOut()
             LoginManager.getInstance().logOut()
             Toast.makeText(context,"Log out Success..", Toast.LENGTH_SHORT).show()
-            btLogout!!.visibility = View.INVISIBLE
-            btLogin!!.visibility = View.VISIBLE
+            btLogout.visibility = View.INVISIBLE
+            btLogin.visibility = View.VISIBLE
         }
     }
 
     private fun initView() {
         mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth!!.currentUser
+        val currentUser = mAuth.currentUser
         if(currentUser != null ){
-            btLogin!!.visibility = View.INVISIBLE
-            btLogout!!.visibility = View.VISIBLE
+            btLogin.visibility = View.INVISIBLE
+            btLogout.visibility = View.VISIBLE
         }
         else{
-            btLogin!!.visibility = View.VISIBLE
-            btLogout!!.visibility = View.INVISIBLE
+            btLogin.visibility = View.VISIBLE
+            btLogout.visibility = View.INVISIBLE
         }
     }
     override fun onDestroy() {

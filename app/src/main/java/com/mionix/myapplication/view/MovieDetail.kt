@@ -26,23 +26,23 @@ import kotlinx.android.synthetic.main.activity_movie_detail.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MovieDetail : AppCompatActivity() {
-    private var poster_path:String? = null
-    private var adapterCastDetail : CastAdapter? = null
-    private var linearLayoutManager : LinearLayoutManager? = null
-    private var watchMovie : Movie? = null
-    private var favouritesMovie : Movie? = null
-    private var mAuth: FirebaseAuth? = null
+    private lateinit var poster_path:String
+    private lateinit var adapterCastDetail : CastAdapter
+    private lateinit var linearLayoutManager : LinearLayoutManager
+    private lateinit var watchMovie : Movie
+    private lateinit var favouritesMovie : Movie
+    private lateinit var mAuth: FirebaseAuth
     private var listCast :MutableList<Cast> = mutableListOf()
     private val movileDetailViewModel : MovileDetailViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
         initViewMovieDetail()
-        val movie_id:String = intent.extras!!["movie_id"].toString()
-        poster_path= intent.extras!!["poster_path"].toString()
-        setupViewModel(movie_id,poster_path!!)
-        btAddToFavourites!!.setOnClickListener{
-            val currentUser = mAuth!!.currentUser
+        val movie_id:String = intent.extras?.get("movie_id").toString()
+        poster_path= intent.extras?.get("poster_path").toString()
+        setupViewModel(movie_id,poster_path)
+        btAddToFavourites.setOnClickListener{
+            val currentUser = mAuth.currentUser
             if(currentUser != null){
                 movileDetailViewModel.getMovie(movie_id.toInt())
                 movileDetailViewModel.getDataMovieDetail.observe(this, Observer {
@@ -58,16 +58,16 @@ class MovieDetail : AppCompatActivity() {
                 val timestamp = timestampLong.toString()
                 Thread{
 
-                    if(db.movieDAO().readFavouriesMovie(favouritesMovie!!.id).isEmpty()){
-                        val favouritesTable = FavouritesTable(favouritesMovie!!.id,
-                            favouritesMovie!!.title,
-                            favouritesMovie!!.poster_path,
-                            favouritesMovie!!.overview,
+                    if(db.movieDAO().readFavouriesMovie(favouritesMovie.id).isEmpty()){
+                        val favouritesTable = FavouritesTable(favouritesMovie.id,
+                            favouritesMovie.title,
+                            favouritesMovie.poster_path,
+                            favouritesMovie.overview,
                             timestamp)
                         db.movieDAO().saveFavouriesMovie(favouritesTable)
                     }
                     else{
-                        db.movieDAO().readFavouriesMovie(favouritesMovie!!.id).forEach {
+                        db.movieDAO().readFavouriesMovie(favouritesMovie.id).forEach {
                             Log.i("@Mionix","""" Id id: ${it.colOverview} """")
                     }                    }
                 }.start()
@@ -76,8 +76,8 @@ class MovieDetail : AppCompatActivity() {
                 Toast.makeText(this,"You have to login",Toast.LENGTH_SHORT).show()
             }
         }
-        btAddToWatchList!!.setOnClickListener {
-            val currentUser = mAuth!!.currentUser
+        btAddToWatchList.setOnClickListener {
+            val currentUser = mAuth.currentUser
             if(currentUser != null){
                 movileDetailViewModel.getMovie(movie_id.toInt())
                 movileDetailViewModel.getDataMovieDetail.observe(this, Observer {
@@ -91,16 +91,16 @@ class MovieDetail : AppCompatActivity() {
                 val timestampLong = System.currentTimeMillis()/60000
                 val timestamp = timestampLong.toString()
                 Thread{
-                    val watchListTable = WatchListTable(watchMovie!!.id,
-                        watchMovie!!.title,
-                        watchMovie!!.poster_path,
-                        watchMovie!!.overview,
+                    val watchListTable = WatchListTable(watchMovie.id,
+                        watchMovie.title,
+                        watchMovie.poster_path,
+                        watchMovie.overview,
                         timestamp)
-                    if(db.movieDAO().readWatchListTable(watchMovie!!.id).isEmpty()){
+                    if(db.movieDAO().readWatchListTable(watchMovie.id).isEmpty()){
                         db.movieDAO().saveWatchListTable(watchListTable)
                     }
                     else{
-                        db.movieDAO().readWatchListTable(watchMovie!!.id).forEach {
+                        db.movieDAO().readWatchListTable(watchMovie.id).forEach {
                             Log.i("@Mionix","""" Id id: ${it.colOverview} """")
                         }
                     }
@@ -117,38 +117,38 @@ class MovieDetail : AppCompatActivity() {
 
         Glide.with(this) //1
             .load(poster_path)
-            .into(ivMovieDetail!!)
+            .into(ivMovieDetail)
         movileDetailViewModel.getMovie(movie_id.toInt())
         movileDetailViewModel.getDataMovieDetail.observe(this, Observer {
 
 
-            tvDescriptionText!!.text = it.overview
-            tvTitleDetailMovie!!.text = it.title
-            tvGenre!!.text = it.genres[0].name
-            tvVote!!.text = it.vote_average.toString()
-            tvReleaseDate!!.text = it.release_date
+            tvDescriptionText.text = it.overview
+            tvTitleDetailMovie.text = it.title
+            tvGenre.text = it.genres[0].name
+            tvVote.text = it.vote_average.toString()
+            tvReleaseDate.text = it.release_date
             Glide.with(this) //1
                 .load(POSTER_BASE_URL + it.backdrop_path)
-                .into(ivBackDropMovieDetail!!)
+                .into(ivBackDropMovieDetail)
         })
 
         movileDetailViewModel.getDataCastAndCrew(movie_id.toInt())
         movileDetailViewModel.getDataCastAndCrew.observe(this, Observer {
             listCast.addAll(it.cast)
-            rvCastMovieDetail!!.adapter!!.notifyDataSetChanged()
+            rvCastMovieDetail.adapter?.notifyDataSetChanged()
         })
         adapterCastDetail = CastAdapter(this,listCast,this)
-        rvCastMovieDetail!!.adapter = adapterCastDetail
+        rvCastMovieDetail.adapter = adapterCastDetail
     }
 
     private fun initViewMovieDetail() {
         mAuth = FirebaseAuth.getInstance()
-        tvVote!!.setCompoundDrawablesWithIntrinsicBounds(R.drawable.star,0,0,0)
+        tvVote.setCompoundDrawablesWithIntrinsicBounds(R.drawable.star,0,0,0)
         linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager!!.orientation = LinearLayoutManager.HORIZONTAL
+        linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
-        rvCastMovieDetail!!.layoutManager = linearLayoutManager
-        rvCastMovieDetail!!.isNestedScrollingEnabled = true
-        rvCastMovieDetail!!.setHasFixedSize(true)
+        rvCastMovieDetail.layoutManager = linearLayoutManager
+        rvCastMovieDetail.isNestedScrollingEnabled = true
+        rvCastMovieDetail.setHasFixedSize(true)
     }
 }

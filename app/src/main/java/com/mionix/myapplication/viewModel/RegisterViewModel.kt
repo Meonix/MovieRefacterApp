@@ -48,15 +48,15 @@ class RegisterViewModel: BaseViewModel() {
                     val deviceToken = FirebaseInstanceId.getInstance().token
 
 
-                    val currentUserID = mAuth.currentUser!!.uid
-                    rootRef.child("Users").child(currentUserID).setValue("")
+                    val currentUserID = mAuth.currentUser?.uid
+                    rootRef.child("Users").child(currentUserID.toString()).setValue("")
 
-                    rootRef.child("Users").child(currentUserID).child("device_token")
+                    rootRef.child("Users").child(currentUserID.toString()).child("device_token")
                         .setValue(deviceToken)
                     _isCreateSucess.value = true
 
                 } else {
-                    _messageCreateError.value = task.exception!!.toString()
+                    _messageCreateError.value = task.exception.toString()
                     _isCreateSucess.value =false
                 }
             }

@@ -34,9 +34,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**
  * A simple [Fragment] subclass.
  */
-class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClickListener {
-    private var adapterPopularMovieView : PopularMovieAdapter? = null
-    private var adapterTopRateMovieView : TopRateMovieAdapter? = null
+class HomeFragment : Fragment(), OnItemClickListener {
+    private lateinit var adapterPopularMovieView : PopularMovieAdapter
+    private lateinit var adapterTopRateMovieView : TopRateMovieAdapter
     private var pageTopRate = 1
     private var pagePopular = 1
     private var popularIsLoading = true
@@ -46,8 +46,8 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
     private val listTopRateMovie :MutableList<Result> = mutableListOf()
 
     private val homeFragmentViewModel : HomeFragmentViewModel by viewModel()
-    private var popularMovieGridLayoutManager: GridLayoutManager? = null
-    private var topRateMovieGridLayoutManager: GridLayoutManager? = null
+    private lateinit var popularMovieGridLayoutManager: GridLayoutManager
+    private lateinit var topRateMovieGridLayoutManager: GridLayoutManager
     private var homeFragmentcontext = context
     private var homeFragmentactivity = activity
     override fun onCreateView(
@@ -64,44 +64,45 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
         listPopularMovie.clear()
         listTopRateMovie.clear()
         initView()
-        setupViewModel(homeFragmentcontext,homeFragmentactivity)
+        setupViewModel()
     }
     private fun initView(){
         popularMovieGridLayoutManager = GridLayoutManager(context,3)
-        popularMovieGridLayoutManager!!.orientation = GridLayoutManager.HORIZONTAL
+        popularMovieGridLayoutManager.orientation = GridLayoutManager.HORIZONTAL
         topRateMovieGridLayoutManager = GridLayoutManager(context,3)
-        topRateMovieGridLayoutManager!!.orientation = GridLayoutManager.HORIZONTAL
+        topRateMovieGridLayoutManager.orientation = GridLayoutManager.HORIZONTAL
 
-        rvPopularMovie!!.layoutManager = popularMovieGridLayoutManager
-        rvPopularMovie!!.isNestedScrollingEnabled = true
-        rvPopularMovie!!.setHasFixedSize(true)
+        rvPopularMovie.layoutManager = popularMovieGridLayoutManager
+        rvPopularMovie.isNestedScrollingEnabled = true
+        rvPopularMovie.setHasFixedSize(true)
 
-        rvTopRateMovie!!.layoutManager = topRateMovieGridLayoutManager
-        rvTopRateMovie!!.isNestedScrollingEnabled = true
-        rvTopRateMovie!!.setHasFixedSize(true)
+        rvTopRateMovie.layoutManager = topRateMovieGridLayoutManager
+        rvTopRateMovie.isNestedScrollingEnabled = true
+        rvTopRateMovie.setHasFixedSize(true)
     }
-    private fun setupViewModel(context :Context,activity: Activity) {
+    private fun setupViewModel() {
 
         // get data and init PopularMovie Recycle View
         homeFragmentViewModel.getListPopularMovie(pagePopular)
         homeFragmentViewModel.getListPopularMovie.observe(this, Observer {
 
             listPopularMovie.addAll(it.results)
-            rvPopularMovie!!.adapter!!.notifyDataSetChanged()
+            rvPopularMovie.adapter?.notifyDataSetChanged()
         })
         adapterPopularMovieView =
-            PopularMovieAdapter(activity
+            PopularMovieAdapter(
+                activity
                 ,listPopularMovie
                 ,context
                 ,this)
-        rvPopularMovie!!.adapter = adapterPopularMovieView
+        rvPopularMovie.adapter = adapterPopularMovieView
 
-        rvPopularMovie!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        rvPopularMovie.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dx > 0) {
-                val visibleItemCount = popularMovieGridLayoutManager!!.childCount
-                val pastVisibleItem = popularMovieGridLayoutManager!!.findFirstCompletelyVisibleItemPosition()
-                val total = adapterTopRateMovieView!!.itemCount
+                val visibleItemCount = popularMovieGridLayoutManager.childCount
+                val pastVisibleItem = popularMovieGridLayoutManager.findFirstCompletelyVisibleItemPosition()
+                val total = adapterTopRateMovieView.itemCount
                 if (popularIsLoading) {
                     if ((visibleItemCount + pastVisibleItem) >= total) {
                         pagePopular += 1
@@ -121,21 +122,22 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
         homeFragmentViewModel.getTopRateMovie.observe(this, Observer {
 
             listTopRateMovie.addAll(it.results)
-            rvTopRateMovie!!.adapter!!.notifyDataSetChanged()
+            rvTopRateMovie.adapter?.notifyDataSetChanged()
         })
         adapterTopRateMovieView =
-            TopRateMovieAdapter(activity
+            TopRateMovieAdapter(
+                activity
                 ,listTopRateMovie
                 ,context
                 ,this)
-        rvTopRateMovie!!.adapter = adapterTopRateMovieView
+        rvTopRateMovie.adapter = adapterTopRateMovieView
 
         rvTopRateMovie.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 //                if (dx > 0) {
-                val visibleItemCount = topRateMovieGridLayoutManager!!.childCount
-                val pastVisibleItem = topRateMovieGridLayoutManager!!.findFirstCompletelyVisibleItemPosition()
-                val total = adapterTopRateMovieView!!.itemCount
+                val visibleItemCount = topRateMovieGridLayoutManager.childCount
+                val pastVisibleItem = topRateMovieGridLayoutManager.findFirstCompletelyVisibleItemPosition()
+                val total = adapterTopRateMovieView.itemCount
                 if (topRateIsLoading) {
                     if ((visibleItemCount + pastVisibleItem) >= total) {
                         pageTopRate += 1
@@ -155,11 +157,7 @@ class HomeFragment(context :Context,activity: Activity) : Fragment(), OnItemClic
         val intent = Intent(context, MovieDetail::class.java)
         intent.putExtra("movie_id",listPopularMovie.id)
         intent.putExtra("poster_path",moviePosterURL)
-        val options: ActivityOptionsCompat = ActivityOptionsCompat
-            .makeSceneTransitionAnimation(
-                homeFragmentactivity,ivItemRecycleView
-                , ViewCompat.getTransitionName(ivItemRecycleView).toString())
-        startActivity(intent,options.toBundle())
+        startActivity(intent)
     }
 
     override fun onDestroy() {

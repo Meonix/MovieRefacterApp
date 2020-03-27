@@ -45,10 +45,10 @@ import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
-    private var mAuth: FirebaseAuth? = null
-    private var usersRef: DatabaseReference? = null
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var usersRef: DatabaseReference
     private var currentUser: FirebaseUser? = null
-    private var loadingBar: ProgressDialog? = null
+    private lateinit var loadingBar: ProgressDialog
     private val requestCode = 1
     private val rcSignIn = 2
     private lateinit var callbackManager: CallbackManager
@@ -63,8 +63,8 @@ class LoginActivity : AppCompatActivity() {
 
         initializeFields()
         setupViewModel()
-        currentUser = mAuth!!.currentUser
-        btLogin!!.setOnClickListener{ allowUserToLogin() }
+        currentUser = mAuth.currentUser
+        btLogin.setOnClickListener{ allowUserToLogin() }
 
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -91,7 +91,7 @@ class LoginActivity : AppCompatActivity() {
 //        } catch (e: NoSuchAlgorithmException) {
 //
 //        }
-        btRegister!!.setOnClickListener{ sendUserToRegisterActivity() }
+        btRegister.setOnClickListener{ sendUserToRegisterActivity() }
     }
 
     private fun sendUserToRegisterActivity() {
@@ -101,18 +101,18 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initializeFields() {
         setSupportActionBar(login_toolbar as Toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         loadingBar = ProgressDialog(this)
-        loadingBar!!.setTitle("Sign In")
-        loadingBar!!.setMessage("Please wait....")
-        loadingBar!!.setCanceledOnTouchOutside(false)
+        loadingBar.setTitle("Sign In")
+        loadingBar.setMessage("Please wait....")
+        loadingBar.setCanceledOnTouchOutside(false)
     }
     private fun setupViewModel() {
         loginViewModel.isLoading.observe(this,Observer {
             if(it)
-                loadingBar!!.show()
+                loadingBar.show()
             else
-                loadingBar!!.dismiss()
+                loadingBar.dismiss()
         })
         loginViewModel.emailError.observe(this, Observer {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
@@ -151,8 +151,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun allowUserToLogin() {
         loginViewModel.signUp(
-            tietEmailLogin.text!!.trim().toString(),
-            tietPasswordLogin.text!!.trim().toString()
+            tietEmailLogin.text?.trim().toString(),
+            tietPasswordLogin.text?.trim().toString()
         )
     }
     private fun sendUserToProfileActivity() {
@@ -254,13 +254,13 @@ class LoginActivity : AppCompatActivity() {
         else if (requestCode == resultCode){
            val result : LineLoginResult = LineLoginApi.getLoginResultFromIntent(data)
             if(result.responseCode == LineApiResponseCode.SUCCESS){
-                val accessToken = result.lineCredential!!.accessToken.tokenString
+                val accessToken = result.lineCredential?.accessToken?.tokenString
                 val transitionIntent = Intent(this@LoginActivity, MainActivity::class.java)
                 Toast.makeText(this,"login success..",Toast.LENGTH_SHORT).show()
                 transitionIntent.putExtra("line_profile", result.lineProfile)
                 transitionIntent.putExtra("line_credential", result.lineCredential)
                 transitionIntent.putExtra("line_result", result)
-                Toast.makeText(this,"welcome  "+result.lineProfile!!.displayName,Toast.LENGTH_LONG).show()
+                Toast.makeText(this,"welcome  "+result.lineProfile?.displayName,Toast.LENGTH_LONG).show()
                 startActivity(transitionIntent)
             }
             else if (result.responseCode == LineApiResponseCode.CANCEL){
@@ -272,7 +272,7 @@ class LoginActivity : AppCompatActivity() {
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth!!.currentUser
+        val currentUser = mAuth.currentUser
         if(currentUser != null)
             updateUI(currentUser)
     }
@@ -283,12 +283,14 @@ class LoginActivity : AppCompatActivity() {
 
     private fun handleFacebookAccessToken(token: AccessToken) {
         val credential = FacebookAuthProvider.getCredential(token.token)
-        mAuth!!.signInWithCredential(credential)
+        mAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    val user = mAuth!!.currentUser
-                    updateUI(user!!)
+                    val user = mAuth.currentUser
+                    if (user != null) {
+                        updateUI(user)
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(applicationContext, "Authentication failed.",

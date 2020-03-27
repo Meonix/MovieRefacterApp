@@ -22,9 +22,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RegisterActivity : AppCompatActivity() {
 
-    private var mAuth: FirebaseAuth? = null
-    private var rootRef: DatabaseReference? = null
-    private var loadingBar: ProgressDialog? = null
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var rootRef: DatabaseReference
+    private lateinit var loadingBar: ProgressDialog
     private val registerViewModel: RegisterViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +33,12 @@ class RegisterActivity : AppCompatActivity() {
         rootRef = FirebaseDatabase.getInstance().reference
         initializeFields()
         setupViewModel()
-        already_have_account_link!!.setOnClickListener { sendUserToLoginActivity() }
-        register_button!!.setOnClickListener {
-            loadingBar!!.setTitle("Creating New Account")
-            loadingBar!!.setMessage("Please wait, while we are creating new account for you...")
-            loadingBar!!.setCanceledOnTouchOutside(true)
-            loadingBar!!.show()
+        already_have_account_link.setOnClickListener { sendUserToLoginActivity() }
+        register_button.setOnClickListener {
+            loadingBar.setTitle("Creating New Account")
+            loadingBar.setMessage("Please wait, while we are creating new account for you...")
+            loadingBar.setCanceledOnTouchOutside(true)
+            loadingBar.show()
             createNewAccount() }
 
 
@@ -50,11 +50,11 @@ class RegisterActivity : AppCompatActivity() {
             if(it){
                 sendUserToProfileActivity()
                 Toast.makeText(this@RegisterActivity, "Account created Successfully...", Toast.LENGTH_SHORT).show()
-                loadingBar!!.dismiss()
+                loadingBar.dismiss()
             }else{
                 registerViewModel.messageCreateError.observe(this, Observer {e->
                     Toast.makeText(this@RegisterActivity, "Error :$e", Toast.LENGTH_SHORT).show()
-                    loadingBar!!.dismiss()
+                    loadingBar.dismiss()
                 })
 
             }
@@ -62,14 +62,14 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun createNewAccount() {
-        registerViewModel.createAccount(register_email!!.text.trim().toString()
-            ,register_password!!.text.trim().toString())
+        registerViewModel.createAccount(register_email.text.trim().toString()
+            ,register_password.text.trim().toString())
     }
 
     private fun initializeFields() {
         loadingBar = ProgressDialog(this)
         setSupportActionBar(register_toolbar as Toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun sendUserToLoginActivity() {
