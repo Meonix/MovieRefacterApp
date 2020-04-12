@@ -44,29 +44,25 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class LoginActivity : AppCompatActivity() {
-
     private lateinit var mAuth: FirebaseAuth
-    private lateinit var usersRef: DatabaseReference
     private var currentUser: FirebaseUser? = null
     private lateinit var loadingBar: ProgressDialog
     private val requestCode = 1
     private val rcSignIn = 2
     private lateinit var callbackManager: CallbackManager
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var gso : GoogleSignInOptions
     private val loginViewModel: LoginViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         mAuth = FirebaseAuth.getInstance()
-        usersRef = FirebaseDatabase.getInstance().reference.child("Users")
 
         initializeFields()
         setupViewModel()
         currentUser = mAuth.currentUser
         btLogin.setOnClickListener{ allowUserToLogin() }
 
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        val gso : GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()

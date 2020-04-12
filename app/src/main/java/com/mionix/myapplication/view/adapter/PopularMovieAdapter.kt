@@ -59,7 +59,9 @@ class PopularMovieAdapter(private val activity: FragmentActivity?,
             }
         }
     }
-
+    fun update(){
+        this.notifyDataSetChanged()
+    }
 }
 
 interface OnItemClickListener{

@@ -26,23 +26,18 @@ import kotlinx.android.synthetic.main.activity_movie_detail.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MovieDetail : AppCompatActivity() {
-    private lateinit var poster_path:String
-    private lateinit var adapterCastDetail : CastAdapter
-    private lateinit var linearLayoutManager : LinearLayoutManager
-    private lateinit var watchMovie : Movie
-    private lateinit var favouritesMovie : Movie
     private lateinit var mAuth: FirebaseAuth
-    private var listCast :MutableList<Cast> = mutableListOf()
     private val movileDetailViewModel : MovileDetailViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
         initViewMovieDetail()
         val movie_id:String = intent.extras?.get("movie_id").toString()
-        poster_path= intent.extras?.get("poster_path").toString()
+        val poster_path:String = intent.extras?.get("poster_path").toString()
         setupViewModel(movie_id,poster_path)
         btAddToFavourites.setOnClickListener{
             val currentUser = mAuth.currentUser
+            lateinit var favouritesMovie : Movie
             if(currentUser != null){
                 movileDetailViewModel.getMovie(movie_id.toInt())
                 movileDetailViewModel.getDataMovieDetail.observe(this, Observer {
@@ -78,6 +73,7 @@ class MovieDetail : AppCompatActivity() {
         }
         btAddToWatchList.setOnClickListener {
             val currentUser = mAuth.currentUser
+            lateinit var watchMovie : Movie
             if(currentUser != null){
                 movileDetailViewModel.getMovie(movie_id.toInt())
                 movileDetailViewModel.getDataMovieDetail.observe(this, Observer {
@@ -114,7 +110,8 @@ class MovieDetail : AppCompatActivity() {
     }
 
     private fun setupViewModel(movie_id: String,poster_path:String) {
-
+        val listCast :MutableList<Cast> = mutableListOf()
+        val adapterCastDetail  = CastAdapter(this,listCast,this)
         Glide.with(this) //1
             .load(poster_path)
             .into(ivMovieDetail)
@@ -135,16 +132,15 @@ class MovieDetail : AppCompatActivity() {
         movileDetailViewModel.getDataCastAndCrew(movie_id.toInt())
         movileDetailViewModel.getDataCastAndCrew.observe(this, Observer {
             listCast.addAll(it.cast)
-            rvCastMovieDetail.adapter?.notifyDataSetChanged()
+            adapterCastDetail.update()
         })
-        adapterCastDetail = CastAdapter(this,listCast,this)
         rvCastMovieDetail.adapter = adapterCastDetail
     }
 
     private fun initViewMovieDetail() {
+        val linearLayoutManager  = LinearLayoutManager(this)
         mAuth = FirebaseAuth.getInstance()
         tvVote.setCompoundDrawablesWithIntrinsicBounds(R.drawable.star,0,0,0)
-        linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
         rvCastMovieDetail.layoutManager = linearLayoutManager

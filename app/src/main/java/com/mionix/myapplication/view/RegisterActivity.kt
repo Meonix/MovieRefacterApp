@@ -22,15 +22,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var mAuth: FirebaseAuth
-    private lateinit var rootRef: DatabaseReference
     private lateinit var loadingBar: ProgressDialog
     private val registerViewModel: RegisterViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        mAuth = FirebaseAuth.getInstance()
-        rootRef = FirebaseDatabase.getInstance().reference
         initializeFields()
         setupViewModel()
         already_have_account_link.setOnClickListener { sendUserToLoginActivity() }

@@ -32,10 +32,6 @@ import java.util.*
  * A simple [Fragment] subclass.
  */
 class InTheatresFragment : Fragment(), OnItemClickListener {
-    private lateinit var adapterVietNamMovieView : VietNamMovieAdapter
-    private val listVietNamMovie :MutableList<Result> = mutableListOf()
-    private val inTheatresViewModel : InTheatresViewModel by viewModel()
-    private lateinit var vietnamMovieGridLayoutManager: GridLayoutManager
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,22 +49,25 @@ class InTheatresFragment : Fragment(), OnItemClickListener {
     }
 
     private fun setupViewModel() {
+
+        val listVietNamMovie :MutableList<Result> = mutableListOf()
+        val adapterVietNamMovieView  = VietNamMovieAdapter(activity
+            ,listVietNamMovie
+            ,context
+            ,this)
+
+        val inTheatresViewModel : InTheatresViewModel by viewModel()
         inTheatresViewModel.getVietNamMovie()
-        inTheatresViewModel.getVietNamMovie.observe(this,androidx.lifecycle.Observer {
+        inTheatresViewModel.getVietNamMovie.observe(viewLifecycleOwner,androidx.lifecycle.Observer {
             listVietNamMovie.clear()
             listVietNamMovie.addAll(it.results)
-            rvVietNamMovie.adapter?.notifyDataSetChanged()
+            adapterVietNamMovieView.update()
         })
-        adapterVietNamMovieView =
-            VietNamMovieAdapter(activity
-                ,listVietNamMovie
-                ,context
-                ,this)
         rvVietNamMovie.adapter = adapterVietNamMovieView
     }
 
     private fun initView() {
-        vietnamMovieGridLayoutManager = GridLayoutManager(context,3)
+        val vietnamMovieGridLayoutManager = GridLayoutManager(context,3)
         vietnamMovieGridLayoutManager.orientation = GridLayoutManager.VERTICAL
 
         rvVietNamMovie.layoutManager = vietnamMovieGridLayoutManager

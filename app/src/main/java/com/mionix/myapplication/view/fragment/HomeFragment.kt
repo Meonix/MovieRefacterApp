@@ -35,8 +35,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * A simple [Fragment] subclass.
  */
 class HomeFragment : Fragment(), OnItemClickListener {
-    private lateinit var adapterPopularMovieView : PopularMovieAdapter
-    private lateinit var adapterTopRateMovieView : TopRateMovieAdapter
     private var pageTopRate = 1
     private var pagePopular = 1
     private var popularIsLoading = true
@@ -48,8 +46,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
     private val homeFragmentViewModel : HomeFragmentViewModel by viewModel()
     private lateinit var popularMovieGridLayoutManager: GridLayoutManager
     private lateinit var topRateMovieGridLayoutManager: GridLayoutManager
-    private var homeFragmentcontext = context
-    private var homeFragmentactivity = activity
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,19 +78,18 @@ class HomeFragment : Fragment(), OnItemClickListener {
     }
     private fun setupViewModel() {
 
+        val adapterPopularMovieView = PopularMovieAdapter(
+            activity
+            ,listPopularMovie
+            ,context
+            ,this)
         // get data and init PopularMovie Recycle View
         homeFragmentViewModel.getListPopularMovie(pagePopular)
-        homeFragmentViewModel.getListPopularMovie.observe(this, Observer {
+        homeFragmentViewModel.getListPopularMovie.observe( viewLifecycleOwner, Observer {
 
             listPopularMovie.addAll(it.results)
-            rvPopularMovie.adapter?.notifyDataSetChanged()
+            adapterPopularMovieView.update()
         })
-        adapterPopularMovieView =
-            PopularMovieAdapter(
-                activity
-                ,listPopularMovie
-                ,context
-                ,this)
         rvPopularMovie.adapter = adapterPopularMovieView
 
         rvPopularMovie.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -102,7 +97,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 if (dx > 0) {
                 val visibleItemCount = popularMovieGridLayoutManager.childCount
                 val pastVisibleItem = popularMovieGridLayoutManager.findFirstCompletelyVisibleItemPosition()
-                val total = adapterTopRateMovieView.itemCount
+                val total = adapterPopularMovieView.itemCount
                 if (popularIsLoading) {
                     if ((visibleItemCount + pastVisibleItem) >= total) {
                         pagePopular += 1
@@ -117,19 +112,18 @@ class HomeFragment : Fragment(), OnItemClickListener {
 
         })
 
+        val adapterTopRateMovieView = TopRateMovieAdapter(
+            activity
+            ,listTopRateMovie
+            ,context
+            ,this)
         // get data and init Top Rated Movie Recycle View
         homeFragmentViewModel.getTopRateMovie(pageTopRate)
-        homeFragmentViewModel.getTopRateMovie.observe(this, Observer {
+        homeFragmentViewModel.getTopRateMovie.observe(viewLifecycleOwner, Observer {
 
             listTopRateMovie.addAll(it.results)
-            rvTopRateMovie.adapter?.notifyDataSetChanged()
+            adapterTopRateMovieView.update()
         })
-        adapterTopRateMovieView =
-            TopRateMovieAdapter(
-                activity
-                ,listTopRateMovie
-                ,context
-                ,this)
         rvTopRateMovie.adapter = adapterTopRateMovieView
 
         rvTopRateMovie.addOnScrollListener(object : RecyclerView.OnScrollListener() {

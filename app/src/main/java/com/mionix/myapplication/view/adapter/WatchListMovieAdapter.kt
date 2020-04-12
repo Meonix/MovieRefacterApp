@@ -59,5 +59,7 @@ class WatchListMovieAdapter (private val watchMovieList: MutableList<WatchListTa
 //            }
         }
     }
-
+    fun update(){
+        this.notifyDataSetChanged()
+    }
 }

@@ -18,9 +18,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(){
-    private lateinit var mytabsAccessorAdapter: TabsAccessorAdapter
-    private lateinit var main_tabs : TabLayout
-    private lateinit var homeViewPager: ViewPager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -32,11 +29,11 @@ class MainActivity : AppCompatActivity(){
 
 
     private fun initView() {
-        main_tabs = findViewById(R.id.main_tabs)
+        val mytabsAccessorAdapter = TabsAccessorAdapter(supportFragmentManager)
+        val main_tabs : TabLayout = findViewById(R.id.main_tabs)
+        val homeViewPager: ViewPager = findViewById(R.id.homeViewPager)
         setSupportActionBar(main_toolbar as Toolbar)
         supportActionBar?.title = "MovieDB"
-        mytabsAccessorAdapter = TabsAccessorAdapter(supportFragmentManager)
-        homeViewPager = findViewById(R.id.homeViewPager)
         homeViewPager.adapter = mytabsAccessorAdapter
 
         //when we go back the main activity  we will back old position

@@ -46,7 +46,9 @@ class FavouriesMovieAdapter (private val watchMovieList: MutableList<FavouritesT
 
 
     }
-
+    fun update(){
+        this.notifyDataSetChanged()
+    }
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val ivItemRecycleView = itemView.findViewById(R.id.ivItemRecycleView) as ImageView
 

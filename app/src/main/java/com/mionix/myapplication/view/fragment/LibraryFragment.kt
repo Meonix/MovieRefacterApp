@@ -30,13 +30,6 @@ import kotlinx.android.synthetic.main.fragment_library.*
  * A simple [Fragment] subclass.
  */
 class LibraryFragment : Fragment() {
-    private lateinit var watchListGridLayoutManager: GridLayoutManager
-    private lateinit var favouritesListGridLayoutManager: GridLayoutManager
-    private var listFavouriesMovie : MutableList<FavouritesTable> = mutableListOf()
-    private var watchListMovie : MutableList<WatchListTable> = mutableListOf()
-    private lateinit var mAuth: FirebaseAuth
-    private lateinit var adapterWatchListMovieView : WatchListMovieAdapter
-    private lateinit var adapterFavouriesMovieView : FavouriesMovieAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,6 +47,11 @@ class LibraryFragment : Fragment() {
     }
 
     private fun initData() {
+
+        lateinit var adapterFavouriesMovieView : FavouriesMovieAdapter
+        lateinit var adapterWatchListMovieView : WatchListMovieAdapter
+        val listFavouriesMovie : MutableList<FavouritesTable> = mutableListOf()
+        val watchListMovie : MutableList<WatchListTable> = mutableListOf()
         val db = context?.let {
             Room.databaseBuilder(
                 it
@@ -70,7 +68,7 @@ class LibraryFragment : Fragment() {
                     listFavouriesMovie,context)
             activity?.runOnUiThread(Runnable {
                 rvFavouritesMovie.adapter = adapterFavouriesMovieView
-                rvFavouritesMovie.adapter?.notifyDataSetChanged()
+                adapterFavouriesMovieView.update()
             })
         }.start()
 
@@ -82,7 +80,7 @@ class LibraryFragment : Fragment() {
                 watchListMovie,context)
             activity?.runOnUiThread(Runnable {
                 rvWatchListMovie.adapter = adapterWatchListMovieView
-                rvWatchListMovie.adapter?.notifyDataSetChanged()
+                adapterWatchListMovieView.update()
             })
 
         }.start()
@@ -91,9 +89,10 @@ class LibraryFragment : Fragment() {
     }
 
     private fun initView() {
-        watchListGridLayoutManager = GridLayoutManager(context,3)
+        val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+        val favouritesListGridLayoutManager = GridLayoutManager(context,3)
+        val watchListGridLayoutManager = GridLayoutManager(context,3)
         watchListGridLayoutManager.orientation = GridLayoutManager.VERTICAL
-        favouritesListGridLayoutManager = GridLayoutManager(context,3)
         favouritesListGridLayoutManager.orientation = GridLayoutManager.VERTICAL
 
         rvWatchListMovie.layoutManager = watchListGridLayoutManager
@@ -105,7 +104,6 @@ class LibraryFragment : Fragment() {
         rvFavouritesMovie.setHasFixedSize(true)
 
 
-        mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser
         if(currentUser != null ){
             llLibrary1.visibility = View.GONE

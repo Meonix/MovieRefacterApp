@@ -58,5 +58,7 @@ class TopRateMovieAdapter(private val activity: FragmentActivity?,
             }
         }
     }
-
+    fun update(){
+        this.notifyDataSetChanged()
+    }
 }

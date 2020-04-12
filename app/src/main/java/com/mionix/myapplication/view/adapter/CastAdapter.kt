@@ -46,6 +46,9 @@ class CastAdapter (private val activity: Activity,
 
 
     }
+    fun update(){
+            this.notifyDataSetChanged()
+    }
 
     class ViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView){
         val ivCast = itemView.findViewById(R.id.ivItemCast) as ImageView

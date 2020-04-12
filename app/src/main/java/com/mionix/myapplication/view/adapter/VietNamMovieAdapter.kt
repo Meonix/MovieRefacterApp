@@ -59,5 +59,7 @@ class VietNamMovieAdapter (private val activity: FragmentActivity?,
             }
         }
     }
-
+    fun update(){
+        this.notifyDataSetChanged()
+    }
 }
