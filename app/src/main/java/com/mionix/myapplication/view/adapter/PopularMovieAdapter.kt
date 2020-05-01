@@ -13,11 +13,10 @@ import com.bumptech.glide.Glide
 import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
 
-class PopularMovieAdapter(private val activity: FragmentActivity?,
-                          private val popularMovieList: MutableList<Result>,
-                          val context: Context?,
+class PopularMovieAdapter(private val popularMovieList: MutableList<Result>,
                           val itemClickListener: OnItemClickListener
 ) :RecyclerView.Adapter<PopularMovieAdapter.ViewHolder>(){
+    private var data :MutableList<Result> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_recycleview_main,parent,false)
         return ViewHolder(v)
@@ -33,15 +32,14 @@ class PopularMovieAdapter(private val activity: FragmentActivity?,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val listPopularMovie= popularMovieList[position]
+        val listPopularMovie= data[position]
         val moviePosterURL = POSTER_BASE_URL + listPopularMovie.posterPath
 
         //load image form https url into view holder (see build gradle)
-        activity?.let {
-            Glide.with(it) //1
+
+            Glide.with(holder.ivPopularMovie) //1
                 .load(moviePosterURL)
                 .into(holder.ivPopularMovie)
-        }
         //
             holder.bind(listPopularMovie,itemClickListener)
 
@@ -59,8 +57,9 @@ class PopularMovieAdapter(private val activity: FragmentActivity?,
             }
         }
     }
-    fun update(){
-        this.notifyDataSetChanged()
+    fun updateData(data: MutableList<Result>) {
+        this.data = data
+        notifyDataSetChanged()
     }
 }
 

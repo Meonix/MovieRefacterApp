@@ -28,18 +28,19 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MovieDetail : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private val movileDetailViewModel : MovileDetailViewModel by viewModel()
+    private lateinit var favouritesMovie : Movie
+    private lateinit var watchMovie : Movie
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
         initViewMovieDetail()
-        val movie_id:String = intent.extras?.get("movie_id").toString()
-        val poster_path:String = intent.extras?.get("poster_path").toString()
-        setupViewModel(movie_id,poster_path)
+        val movieId:String = intent.extras?.get("movieId").toString()
+        val posterPath:String = intent.extras?.get("posterPath").toString()
+        setupViewModel(movieId,posterPath)
         btAddToFavourites.setOnClickListener{
             val currentUser = mAuth.currentUser
-            lateinit var favouritesMovie : Movie
             if(currentUser != null){
-                movileDetailViewModel.getMovie(movie_id.toInt())
+                movileDetailViewModel.getMovie(movieId.toInt())
                 movileDetailViewModel.getDataMovieDetail.observe(this, Observer {
                     favouritesMovie = it
                 })
@@ -73,9 +74,8 @@ class MovieDetail : AppCompatActivity() {
         }
         btAddToWatchList.setOnClickListener {
             val currentUser = mAuth.currentUser
-            lateinit var watchMovie : Movie
             if(currentUser != null){
-                movileDetailViewModel.getMovie(movie_id.toInt())
+                movileDetailViewModel.getMovie(movieId.toInt())
                 movileDetailViewModel.getDataMovieDetail.observe(this, Observer {
                     watchMovie = it
                 })
@@ -109,13 +109,13 @@ class MovieDetail : AppCompatActivity() {
         }
     }
 
-    private fun setupViewModel(movie_id: String,poster_path:String) {
+    private fun setupViewModel(movieId: String,posterPath:String) {
         val listCast :MutableList<Cast> = mutableListOf()
-        val adapterCastDetail  = CastAdapter(this,listCast,this)
+        val adapterCastDetail  = CastAdapter(listCast)
         Glide.with(this) //1
-            .load(poster_path)
+            .load(posterPath)
             .into(ivMovieDetail)
-        movileDetailViewModel.getMovie(movie_id.toInt())
+        movileDetailViewModel.getMovie(movieId.toInt())
         movileDetailViewModel.getDataMovieDetail.observe(this, Observer {
 
 
@@ -129,10 +129,10 @@ class MovieDetail : AppCompatActivity() {
                 .into(ivBackDropMovieDetail)
         })
 
-        movileDetailViewModel.getDataCastAndCrew(movie_id.toInt())
+        movileDetailViewModel.getDataCastAndCrew(movieId.toInt())
         movileDetailViewModel.getDataCastAndCrew.observe(this, Observer {
             listCast.addAll(it.cast)
-            adapterCastDetail.update()
+            adapterCastDetail.updateData(listCast)
         })
         rvCastMovieDetail.adapter = adapterCastDetail
     }

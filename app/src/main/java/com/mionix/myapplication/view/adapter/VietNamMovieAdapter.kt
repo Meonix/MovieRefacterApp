@@ -13,14 +13,18 @@ import com.bumptech.glide.Glide
 import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
 
-class VietNamMovieAdapter (private val activity: FragmentActivity?,
-                           private val vietNamMovieList: MutableList<Result>,
-                           val context: Context?,
+class VietNamMovieAdapter (private val vietNamMovieList: MutableList<Result>,
                            val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<VietNamMovieAdapter.ViewHolder>(){
+    private var data :MutableList<Result> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_recycleview_main,parent,false)
+        data = vietNamMovieList
         return ViewHolder(v)
+    }
+    fun updateData(data: MutableList<Result>) {
+        this.data = data
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
@@ -33,15 +37,13 @@ class VietNamMovieAdapter (private val activity: FragmentActivity?,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val vietNamMovieList= vietNamMovieList[position]
+        val vietNamMovieList= data[position]
         val moviePosterURL = POSTER_BASE_URL + vietNamMovieList.posterPath
 
         //load image form https url into view holder (see build gradle)
-        activity?.let {
-            Glide.with(it) //1
+            Glide.with(holder.ivPopularMovie) //1
                 .load(moviePosterURL)
                 .into(holder.ivPopularMovie)
-        }
         //
         holder.bind(vietNamMovieList,itemClickListener)
 
@@ -58,8 +60,5 @@ class VietNamMovieAdapter (private val activity: FragmentActivity?,
                 clickListener.onItemClicked(vietNamMovieList)
             }
         }
-    }
-    fun update(){
-        this.notifyDataSetChanged()
     }
 }

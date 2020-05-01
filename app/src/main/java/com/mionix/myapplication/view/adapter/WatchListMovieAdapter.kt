@@ -15,9 +15,10 @@ import com.mionix.myapplication.api.POSTER_BASE_URL
 import com.mionix.myapplication.localDataBase.WatchListTable
 import com.mionix.myapplication.model.LocalSavedMovie
 
-class WatchListMovieAdapter (private val watchMovieList: MutableList<WatchListTable>,
-                             val context: Context?
+class WatchListMovieAdapter (private val watchMovieList: MutableList<WatchListTable>
 ) : RecyclerView.Adapter<WatchListMovieAdapter.ViewHolder>(){
+    private var data :MutableList<WatchListTable> = mutableListOf()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_recycleview_main,parent,false)
         return ViewHolder(v)
@@ -33,15 +34,13 @@ class WatchListMovieAdapter (private val watchMovieList: MutableList<WatchListTa
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val watchMovieList= watchMovieList[position]
+        val watchMovieList= data[position]
         val castPosterURL = POSTER_BASE_URL + watchMovieList.colPoster
 
         //load image form https url into view holder (see build gradle)
-        context?.let {
-            Glide.with(it) //1
+            Glide.with(holder.ivItemRecycleView) //1
                 .load(castPosterURL)
                 .into(holder.ivItemRecycleView)
-        }
         //
         holder.bind(watchMovieList)
 
@@ -59,7 +58,8 @@ class WatchListMovieAdapter (private val watchMovieList: MutableList<WatchListTa
 //            }
         }
     }
-    fun update(){
-        this.notifyDataSetChanged()
+    fun updateData(data: MutableList<WatchListTable>) {
+        this.data = data
+        notifyDataSetChanged()
     }
 }

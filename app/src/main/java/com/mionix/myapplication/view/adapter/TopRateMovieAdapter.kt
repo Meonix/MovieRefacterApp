@@ -12,11 +12,10 @@ import com.bumptech.glide.Glide
 import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
 import com.mionix.myapplication.model.Result
-class TopRateMovieAdapter(private val activity: FragmentActivity?,
-                          private val topRateMovieList: MutableList<Result>,
-                          val context: Context?,
+class TopRateMovieAdapter(private val topRateMovieList: MutableList<Result>,
                           val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<TopRateMovieAdapter.ViewHolder>(){
+    private var data :MutableList<Result> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_recycleview_main,parent,false)
         return ViewHolder(v)
@@ -32,15 +31,13 @@ class TopRateMovieAdapter(private val activity: FragmentActivity?,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val topRateMovieList= topRateMovieList[position]
+        val topRateMovieList= data[position]
         val moviePosterURL = POSTER_BASE_URL + topRateMovieList.posterPath
 
         //load image form https url into view holder (see build gradle)
-        activity?.let {
-            Glide.with(it) //1
+            Glide.with(holder.ivPopularMovie) //1
                 .load(moviePosterURL)
                 .into(holder.ivPopularMovie)
-        }
         //
         holder.bind(topRateMovieList,itemClickListener)
 
@@ -58,7 +55,8 @@ class TopRateMovieAdapter(private val activity: FragmentActivity?,
             }
         }
     }
-    fun update(){
-        this.notifyDataSetChanged()
+    fun updateData(data: MutableList<Result>) {
+        this.data = data
+        notifyDataSetChanged()
     }
 }

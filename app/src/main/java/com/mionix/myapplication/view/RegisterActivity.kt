@@ -29,8 +29,8 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_register)
         initializeFields()
         setupViewModel()
-        already_have_account_link.setOnClickListener { sendUserToLoginActivity() }
-        register_button.setOnClickListener {
+        alreadyHaveAccountLink.setOnClickListener { sendUserToLoginActivity() }
+        registerButton.setOnClickListener {
             loadingBar.setTitle("Creating New Account")
             loadingBar.setMessage("Please wait, while we are creating new account for you...")
             loadingBar.setCanceledOnTouchOutside(true)
@@ -58,13 +58,13 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun createNewAccount() {
-        registerViewModel.createAccount(register_email.text.trim().toString()
-            ,register_password.text.trim().toString())
+        registerViewModel.createAccount(registerEmail.text.trim().toString()
+            ,registerPassword.text.trim().toString())
     }
 
     private fun initializeFields() {
         loadingBar = ProgressDialog(this)
-        setSupportActionBar(register_toolbar as Toolbar)
+        setSupportActionBar(registerToolbar as Toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 

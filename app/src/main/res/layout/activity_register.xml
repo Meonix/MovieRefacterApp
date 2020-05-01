@@ -19,7 +19,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/register_toolbar"
+            android:id="@+id/registerToolbar"
             />
     </com.google.android.material.appbar.AppBarLayout>
     <ImageView
@@ -46,7 +46,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         >
         <EditText
-            android:id="@+id/register_email"
+            android:id="@+id/registerEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -59,10 +59,10 @@
             android:padding="14dp" />
 
         <EditText
-            android:id="@+id/register_password"
+            android:id="@+id/registerPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_email"
+            android:layout_below="@+id/registerEmail"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="17dp"
@@ -73,10 +73,10 @@
             android:padding="14dp" />
 
         <Button
-            android:id="@+id/register_button"
+            android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_password"
+            android:layout_below="@+id/registerPassword"
             android:layout_marginLeft="19dp"
             android:layout_marginTop="4dp"
             android:layout_marginRight="19dp"
@@ -87,10 +87,10 @@
             android:textColor="@android:color/background_light"
             android:textSize="24sp" />
         <TextView
-            android:id="@+id/already_have_account_link"
+            android:id="@+id/alreadyHaveAccountLink"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_button"
+            android:layout_below="@+id/registerButton"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_centerHorizontal="true"

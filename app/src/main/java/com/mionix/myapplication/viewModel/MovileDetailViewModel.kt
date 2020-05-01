@@ -16,8 +16,8 @@ class MovileDetailViewModel (private val mMovieRepo: MovieRepo,
 ): BaseViewModel(){
     private val _getDataMovieDetail = MutableLiveData<Movie>()
     val getDataMovieDetail: LiveData<Movie> get() = _getDataMovieDetail
-    fun getMovie(movie_id: Int) = executeUseCase {
-        mMovieRepo.getMovie(movie_id)
+    fun getMovie(movieId: Int) = executeUseCase {
+        mMovieRepo.getMovie(movieId)
             .onLoading {
                 println("Loading $it")
             }
@@ -33,8 +33,8 @@ class MovileDetailViewModel (private val mMovieRepo: MovieRepo,
 
     private val _getDataCastAndCrew = MutableLiveData<CastAndCrew>()
     val getDataCastAndCrew:LiveData<CastAndCrew> get() = _getDataCastAndCrew
-    fun getDataCastAndCrew(movie_id: Int) = executeUseCase {
-        mCastAndCrew.getCastAndCrew(movie_id)
+    fun getDataCastAndCrew(movieId: Int) = executeUseCase {
+        mCastAndCrew.getCastAndCrew(movieId)
             .onLoading {
                 println("Loading $it")
             }

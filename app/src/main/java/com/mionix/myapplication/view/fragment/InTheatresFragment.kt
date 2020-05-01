@@ -51,9 +51,8 @@ class InTheatresFragment : Fragment(), OnItemClickListener {
     private fun setupViewModel() {
 
         val listVietNamMovie :MutableList<Result> = mutableListOf()
-        val adapterVietNamMovieView  = VietNamMovieAdapter(activity
-            ,listVietNamMovie
-            ,context
+        val adapterVietNamMovieView  = VietNamMovieAdapter(
+            listVietNamMovie
             ,this)
 
         val inTheatresViewModel : InTheatresViewModel by viewModel()
@@ -61,7 +60,7 @@ class InTheatresFragment : Fragment(), OnItemClickListener {
         inTheatresViewModel.getVietNamMovie.observe(viewLifecycleOwner,androidx.lifecycle.Observer {
             listVietNamMovie.clear()
             listVietNamMovie.addAll(it.results)
-            adapterVietNamMovieView.update()
+            adapterVietNamMovieView.updateData(listVietNamMovie)
         })
         rvVietNamMovie.adapter = adapterVietNamMovieView
     }
@@ -77,8 +76,8 @@ class InTheatresFragment : Fragment(), OnItemClickListener {
     override fun onItemClicked(listPopularMovie: Result) {
         val moviePosterURL = POSTER_BASE_URL + listPopularMovie.posterPath
         val intent = Intent(context, MovieDetail::class.java)
-        intent.putExtra("movie_id",listPopularMovie.id)
-        intent.putExtra("poster_path",moviePosterURL)
+        intent.putExtra("movieId",listPopularMovie.id)
+        intent.putExtra("posterPath",moviePosterURL)
         startActivity(intent)
     }
     override fun onDestroy() {

@@ -48,8 +48,8 @@ class LibraryFragment : Fragment() {
 
     private fun initData() {
 
-        lateinit var adapterFavouriesMovieView : FavouriesMovieAdapter
-        lateinit var adapterWatchListMovieView : WatchListMovieAdapter
+        var adapterFavouriesMovieView : FavouriesMovieAdapter
+        var adapterWatchListMovieView : WatchListMovieAdapter
         val listFavouriesMovie : MutableList<FavouritesTable> = mutableListOf()
         val watchListMovie : MutableList<WatchListTable> = mutableListOf()
         val db = context?.let {
@@ -65,10 +65,10 @@ class LibraryFragment : Fragment() {
                 listFavouriesMovie.clear()
             favouritesMovieData?.let { listFavouriesMovie.addAll(it) }
                 adapterFavouriesMovieView = FavouriesMovieAdapter(
-                    listFavouriesMovie,context)
+                    listFavouriesMovie)
             activity?.runOnUiThread(Runnable {
                 rvFavouritesMovie.adapter = adapterFavouriesMovieView
-                adapterFavouriesMovieView.update()
+                adapterFavouriesMovieView.updateData(listFavouriesMovie)
             })
         }.start()
 
@@ -77,10 +77,10 @@ class LibraryFragment : Fragment() {
             watchListMovie.clear()
             watchMovieData?.let { watchListMovie.addAll(it) }
             adapterWatchListMovieView = WatchListMovieAdapter(
-                watchListMovie,context)
+                watchListMovie)
             activity?.runOnUiThread(Runnable {
                 rvWatchListMovie.adapter = adapterWatchListMovieView
-                adapterWatchListMovieView.update()
+                adapterWatchListMovieView.updateData(watchListMovie)
             })
 
         }.start()

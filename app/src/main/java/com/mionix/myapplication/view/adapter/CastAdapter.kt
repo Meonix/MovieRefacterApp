@@ -14,10 +14,10 @@ import com.mionix.myapplication.R
 import com.mionix.myapplication.api.POSTER_BASE_URL
 import com.mionix.myapplication.model.Cast
 
-class CastAdapter (private val activity: Activity,
-                   private val castList: MutableList<Cast>,
-                   val context: Context
+class CastAdapter (private val castList: MutableList<Cast>
 ) : RecyclerView.Adapter<CastAdapter.ViewHolder>(){
+    private var data :MutableList<Cast> = mutableListOf()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_cast_recycleview,parent,false)
         return ViewHolder(v)
@@ -33,11 +33,11 @@ class CastAdapter (private val activity: Activity,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val castList= castList[position]
+        val castList= data[position]
         val castPosterURL = POSTER_BASE_URL + castList.profilePath
 
         //load image form https url into view holder (see build gradle)
-        Glide.with(context) //1
+        Glide.with(holder.ivCast) //1
             .load(castPosterURL)
             .apply(RequestOptions.circleCropTransform())
             .into(holder.ivCast)
@@ -46,8 +46,9 @@ class CastAdapter (private val activity: Activity,
 
 
     }
-    fun update(){
-            this.notifyDataSetChanged()
+    fun updateData(data: MutableList<Cast>) {
+        this.data = data
+        notifyDataSetChanged()
     }
 
     class ViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView){

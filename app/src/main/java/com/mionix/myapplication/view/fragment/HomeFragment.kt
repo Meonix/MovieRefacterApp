@@ -79,16 +79,14 @@ class HomeFragment : Fragment(), OnItemClickListener {
     private fun setupViewModel() {
 
         val adapterPopularMovieView = PopularMovieAdapter(
-            activity
-            ,listPopularMovie
-            ,context
+            listPopularMovie
             ,this)
         // get data and init PopularMovie Recycle View
         homeFragmentViewModel.getListPopularMovie(pagePopular)
         homeFragmentViewModel.getListPopularMovie.observe( viewLifecycleOwner, Observer {
 
             listPopularMovie.addAll(it.results)
-            adapterPopularMovieView.update()
+            adapterPopularMovieView.updateData(listPopularMovie)
         })
         rvPopularMovie.adapter = adapterPopularMovieView
 
@@ -113,16 +111,14 @@ class HomeFragment : Fragment(), OnItemClickListener {
         })
 
         val adapterTopRateMovieView = TopRateMovieAdapter(
-            activity
-            ,listTopRateMovie
-            ,context
+            listTopRateMovie
             ,this)
         // get data and init Top Rated Movie Recycle View
         homeFragmentViewModel.getTopRateMovie(pageTopRate)
         homeFragmentViewModel.getTopRateMovie.observe(viewLifecycleOwner, Observer {
 
             listTopRateMovie.addAll(it.results)
-            adapterTopRateMovieView.update()
+            adapterTopRateMovieView.updateData(listTopRateMovie)
         })
         rvTopRateMovie.adapter = adapterTopRateMovieView
 
@@ -149,8 +145,8 @@ class HomeFragment : Fragment(), OnItemClickListener {
     override fun onItemClicked(listPopularMovie: Result) {
         val moviePosterURL = POSTER_BASE_URL + listPopularMovie.posterPath
         val intent = Intent(context, MovieDetail::class.java)
-        intent.putExtra("movie_id",listPopularMovie.id)
-        intent.putExtra("poster_path",moviePosterURL)
+        intent.putExtra("movieId",listPopularMovie.id)
+        intent.putExtra("posterPath",moviePosterURL)
         startActivity(intent)
     }
 

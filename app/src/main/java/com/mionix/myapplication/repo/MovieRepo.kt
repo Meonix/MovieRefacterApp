@@ -7,10 +7,10 @@ import com.mionix.myapplication.model.Movie
 
 class MovieRepo (private val mApi: Api){
 
-    suspend fun getMovie(movie_id: Int): Response<Movie> {
+    suspend fun getMovie(movieId: Int): Response<Movie> {
 //       Response.loading(null)
         return try {
-            Response.success(mApi.getMovie(movie_id))
+            Response.success(mApi.getMovie(movieId))
         } catch (ex:Exception) {
             Response.error(ResponseError(101,ex.message.toString()))
         }

@@ -14,9 +14,9 @@ import com.mionix.myapplication.api.POSTER_BASE_URL
 import com.mionix.myapplication.localDataBase.FavouritesTable
 import com.mionix.myapplication.model.LocalSavedMovie
 
-class FavouriesMovieAdapter (private val watchMovieList: MutableList<FavouritesTable>,
-                             val context: Context?
+class FavouriesMovieAdapter (private val watchMovieList: MutableList<FavouritesTable>
 ) : RecyclerView.Adapter<FavouriesMovieAdapter.ViewHolder>(){
+    private var data :MutableList<FavouritesTable> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_recycleview_main,parent,false)
         return ViewHolder(v)
@@ -32,22 +32,21 @@ class FavouriesMovieAdapter (private val watchMovieList: MutableList<FavouritesT
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val watchMovieList= watchMovieList[position]
+        val watchMovieList= data[position]
         val castPosterURL = POSTER_BASE_URL + watchMovieList.colPoster
 
         //load image form https url into view holder (see build gradle)
-        context?.let {
-            Glide.with(it) //1
+            Glide.with(holder.ivItemRecycleView) //1
                 .load(castPosterURL)
                 .into(holder.ivItemRecycleView)
-        }
         //
         holder.bind(watchMovieList)
 
 
     }
-    fun update(){
-        this.notifyDataSetChanged()
+    fun updateData(data: MutableList<FavouritesTable>) {
+        this.data = data
+        notifyDataSetChanged()
     }
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val ivItemRecycleView = itemView.findViewById(R.id.ivItemRecycleView) as ImageView
